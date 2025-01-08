@@ -1,0 +1,7 @@
+node_modules
+package-lock.json
+.sqlite
+.wwebjs_auth
+.wwebjs_cache
+temp
+database.sqlite

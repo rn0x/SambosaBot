@@ -1,0 +1,36 @@
+{
+  "name": "whatsapp-bot",
+  "version": "1.0.0",
+  "main": "src/index.mjs",
+  "scripts": {
+    "start": "node src/index.mjs",
+    "dev": "nodemon src/index.mjs",
+    "commit": "node src/scripts/autoCommit.mjs",
+    "initDatabase": "node src/scriptS/initDB.mjs"
+  },
+  "keywords": [],
+  "author": {
+    "name": "whatsappBot",
+    "email": "rn0x.me@gmail.com",
+    "url": "https://github.com/rn0x/whatsappBot"
+  },
+  "license": "GPL-3.0-only",
+  "type": "module",
+  "nodemonConfig": {
+    "ignore": [
+      "**/public/**",
+      "**/logs/**",
+      "**/uploads/**",
+      "**/data/**"
+    ]
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "qrcode-terminal": "^0.12.0",
+    "sequelize": "^6.37.5",
+    "whatsapp-web.js": "^1.26.0"
+  }
+}

@@ -8,12 +8,16 @@ import fs from 'fs-extra';
 import { config } from '../config.mjs'
 import { setStickerAuthor, setStickerTitle, getStickerRights } from './utils/stickerRights.mjs'
 import { convertVideoToWebp } from './utils/convertToWebp.mjs';
-import { updateUserStats } from './utils/userService.mjs'
+import { sendUserInfo, updateUserStats } from './utils/userService.mjs'
+import { loadFilterConfig, filterMessage } from './utils/adFilter.mjs';
+import { checkForBadWords } from './utils/badWordsFilter.mjs';
 
 // إعداد متغيرات البيئة
 const MAX_RETRIES = process.env.MAX_RETRIES || 5;  // الحد الأقصى لعدد المحاولات لإعادة الاتصال
 const RETRY_DELAY = process.env.RETRY_DELAY || 5000;  // التأخير بين المحاولات بالمللي ثانية
 let retryCount = 0;
+
+const filterConfig = await loadFilterConfig(config.paths.filterConfig);
 
 // تهيئة عميل WhatsApp
 const client = new Client({
@@ -53,19 +57,23 @@ client.on('auth_failure', (e) => {
 client.on('message', async (message) => {
     try {
         if (message?.from === 'status@broadcast') return;
+        if (message?.fromMe) return;
 
         const chat = await message?.getChat().catch(error => console.log(error));
         const contact = await message?.getContact().catch(error => console.log(error));
         const userId = message?.author ? message.author : message.from;
         const type = message?.type || '';
-        const isGroup = chat?.isGroup;
+        const isGroup = message.from.includes('@g.us');
+        const isChannel = message.from.includes('@newsletter');
         const userName = isGroup ? chat?.name : contact?.pushname;
         const number = isGroup ? chat?.id?.user : contact?.number ? contact?.number : contact?.id?.user;
         const timestamp = Date.now(); // الحصول على الطابع الزمني الحالي
 
         // إذا كانت الرسالة من نوع 'chat' قم بحذفها
 
+
         if (message.hasMedia) {
+
             const media = await message.downloadMedia();
             const data = media.data;
             const dataBase64 = Buffer.from(media.data, 'base64');
@@ -74,19 +82,14 @@ client.on('message', async (message) => {
 
             const { author, title } = await getStickerRights(userId);
 
-            if (mimetype === 'image/webp' && type === 'sticker') {
-
+            if (mimetype === 'image/webp' && type === 'sticker' && !isGroup && !isChannel) {
                 await updateUserStats(userId, 'sticker', userName);
                 const sticker = new MessageMedia('image/webp', data, `${timestamp}.webp`);
                 await message.reply(sticker, undefined, { sendMediaAsSticker: true, stickerAuthor: author, stickerName: title });
+            }
 
-            } else if (mimetype === 'image/jpeg' && type === 'image') {
-
-                await updateUserStats(userId, 'image', userName);
-                const image = new MessageMedia('image/jpeg', data, `${timestamp}.jpg`);
-                await message.reply(image, undefined, { sendMediaAsSticker: true, stickerAuthor: author, stickerName: title });
-
-            } else if (mimetype === 'image/jpeg' && type === 'document') {
+            if (!isGroup) return;
+            else if (mimetype === 'image/jpeg' && type === 'image' || mimetype === 'image/jpeg' && type === 'document') {
 
                 await updateUserStats(userId, 'image', userName);
                 const image = new MessageMedia('image/jpeg', data, `${timestamp}.jpg`);
@@ -96,8 +99,7 @@ client.on('message', async (message) => {
                 await updateUserStats(userId, 'image', userName);
                 const image = new MessageMedia('image/png', data, `${timestamp}.png`);
                 await message.reply(image, undefined, { sendMediaAsSticker: true, stickerAuthor: author, stickerName: title });
-
-            } else if (mimetype === 'video/mp4' && message.type === 'video') {
+            } else if (mimetype === 'video/mp4' && message.type === 'video' || mimetype === 'video/mp4' && message.type === 'document') {
 
                 await updateUserStats(userId, 'video', userName);
                 const inputPath = path.join(tempDir, `${timestamp}.mp4`);
@@ -117,14 +119,15 @@ client.on('message', async (message) => {
                     await message.reply(sticker, undefined, { sendMediaAsSticker: true, stickerAuthor: author, stickerName: title });
 
                     // تنظيف الملفات المؤقتة باستخدام fs-extra
-                    await fs.remove(inputPath);
                     await fs.remove(webpPath.outputPath);
                 } else {
-                    message.reply(webpPath.error);
-                    console.error('Conversion failed:', webpPath.error);
+                    if (webpPath.error) {
+                        message.reply(webpPath.error);
+                        console.error('Conversion failed:', webpPath.error);
+                    }
                 }
             } else {
-                await message.delete(true);
+                // await message.delete(true);
                 return;
             }
         } else if (type === 'chat') {
@@ -135,16 +138,39 @@ client.on('message', async (message) => {
             // حالة الأمر لتعيين المؤلف
             if (text.startsWith('/setAuthor ')) {
                 const author = text.replace('/setAuthor ', '').trim();
-                const response = await setStickerAuthor(userId, author);
-                await message.reply(response);  // إرجاع رد الوظيفة
+
+                // تحديد الحد الأدنى والأقصى لطول النص
+                const minLength = 3; // الحد الأدنى للطول
+                const maxLength = 25; // الحد الأقصى للطول
+
+                if (author.length < minLength) {
+                    await message.reply(`❌ اسم المؤلف يجب أن يكون على الأقل ${minLength} أحرف.`);
+                } else if (author.length > maxLength) {
+                    await message.reply(`❌ اسم المؤلف يجب أن لا يتجاوز ${maxLength} أحرف.`);
+                } else {
+                    const response = await setStickerAuthor(userId, author);
+                    await message.reply(response);  // إرجاع رد الوظيفة
+                }
             }
 
             // حالة الأمر لتعيين العنوان
             if (text.startsWith('/setTitle ')) {
                 const title = text.replace('/setTitle ', '').trim();
-                const response = await setStickerTitle(userId, title);
-                await message.reply(response);  // إرجاع رد الوظيفة
+
+                // تحديد الحد الأدنى والأقصى لطول النص
+                const minLength = 3; // الحد الأدنى للطول
+                const maxLength = 25; // الحد الأقصى للطول
+
+                if (title.length < minLength) {
+                    await message.reply(`❌ العنوان يجب أن يكون على الأقل ${minLength} أحرف.`);
+                } else if (title.length > maxLength) {
+                    await message.reply(`❌ العنوان يجب أن لا يتجاوز ${maxLength} أحرف.`);
+                } else {
+                    const response = await setStickerTitle(userId, title);
+                    await message.reply(response);  // إرجاع رد الوظيفة
+                }
             }
+
 
             // استرجاع حقوق الملصق
             if (text === '/stickerRights') {
@@ -152,20 +178,46 @@ client.on('message', async (message) => {
                 await message.reply(`Sticker Rights: Author - ${author}, Title - ${title}`);
             }
 
+            if (text === '/info') {
+                await sendUserInfo(userId, message);
+            }
+
+            if (text === '/groups') {
+                const groupsMessage = `
+🌐 المجموعات والقنوات الخاصة بنا:
+
+1️⃣ قروب واتساب: "عالم الملصقات"  
+📱 انضم إلى قروب علم الملصقات على واتساب: https://chat.whatsapp.com/FynLLeFLt0rApy6SHJ6UGn
+
+2️⃣ قناة واتساب: "حزم عالم الملصقات"  
+📱 انضم إلى قناة حزم عالم الملصقات على واتساب: https://whatsapp.com/channel/0029Vb2Kret8PgsIIbLCQg1b
+
+3️⃣ قناة تيليجرام: "i8xApp"  
+📱 انضم إلى قناة i8xApp على تيليجرام: https://t.me/i8xApp
+
+نتمنى لك وقتاً ممتعاً في المجموعات والقنوات! 🚀
+    `;
+                await message.reply(groupsMessage, undefined, { linkPreview: false });
+            }
+
+
             // إضافة أمر /start
             if (text === '/start') {
                 const startMessage = `
-🌟 مرحباً بك ${userName} في بوت عالم الملصقات! 🌟
+🌟 مرحباً بك *${userName}* في بوت عالم الملصقات! 🌟
 
 🚀 طريقة استعمال البوت:
 
-1️⃣ /setAuthor [اسم المؤلف]: لتعيين المؤلف للملصقات.  
-2️⃣ /setTitle [عنوان الملصق]: لتعيين عنوان الملصق.  
-3️⃣ /stickerRights: لاسترجاع حقوق الملصق (المؤلف والعنوان).  
-4️⃣ /start: لعرض هذه التعليمات مرة أخرى.  
+1️⃣ */setAuthor* [اسم المؤلف]: لتعيين المؤلف للملصقات.  
+2️⃣ */setTitle* [عنوان الملصق]: لتعيين عنوان الملصق.  
+3️⃣ */stickerRights:* لاسترجاع حقوق الملصق (المؤلف والعنوان). 
+4️⃣ */info:* لعرض معلوماتك الشخصية والإحصائيات (مثل عدد الملصقات التي أرسلتها).   
+5️⃣ */groups:* لعرض القنوات الخاصة بنا.  
+5️⃣ */start:* لعرض هذه التعليمات مرة أخرى.  
 
 🔧 ملاحظات:
 - فقط قم بإرسال صورة او فيديو او ملصق لتحويلها الى ملصق
+- يعمل في القروبات فقط (تواصل معي عبر تيليجرام @F93ii اذا اردت اضافة البوت) يجب ان يكون قروب ملصقات
 - لا تتردد في إرسال أي استفسار! 📩
 
 📱 استمتع! 😊
@@ -174,12 +226,18 @@ client.on('message', async (message) => {
             }
 
             else {
-                if (!userId.includes(config.adminPhoneNumber)) {
-                    await message.delete(true);
-                    console.log('Message deleted');
-                    return; // الخروج من دالة المعالجة بعد الحذف
-                }
 
+                const adminPhoneNumbers = [config.adminPhoneNumber, config.botPhoneNumber]; // أرقام المشرفين
+                if (!adminPhoneNumbers.some(adminNumber => userId.includes(adminNumber))) {
+                    const isAd = filterMessage(text, filterConfig);
+
+                    if (isAd) {
+                        await message.reply(`📢 الرسالة تحتوي على إعلان أو يُشتبه بأنها إعلان`)
+                        await message.delete(true);
+                        return; // الخروج من دالة المعالجة بعد الحذف
+                    }
+                    await checkForBadWords(text, message);
+                }
             }
         }
 
@@ -190,8 +248,12 @@ client.on('message', async (message) => {
 
 client.on('group_join', async (e) => {
     try {
-        // console.log('Group join event:', e);
 
+        if (!config.sendWelcomeFarewellMessages) {
+            return;
+        }
+
+        // console.log('Group join event:', e);
         const userId = e.id?.participant;
         const chat = await client.getChatById(userId);
         const welcomeMessage = `مرحباً ${chat.name}! أهلاً بك في المجموعة. نتمنى لك وقتاً ممتعاً هنا!`;
@@ -203,6 +265,10 @@ client.on('group_join', async (e) => {
 
 client.on('group_leave', async (e) => {
     try {
+
+        if (!config.sendWelcomeFarewellMessages) {
+            return;
+        }
         // console.log('Group leave event:', e);
         const userId = e.id?.participant;
         const chat = await client.getChatById(userId);

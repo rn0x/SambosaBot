@@ -13,7 +13,7 @@ const execAsync = promisify(exec);
 async function getVideoDuration(inputPath) {
     try {
         const { stdout } = await execAsync(`ffprobe -v error -select_streams v:0 -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${inputPath}"`);
-        
+
         const duration = parseFloat(stdout);
         if (isNaN(duration)) {
             throw new Error('Could not determine video duration.');
@@ -39,9 +39,11 @@ export async function convertVideoToWebp(inputPath, outputDir) {
         // الحصول على مدة الفيديو
         const duration = await getVideoDuration(inputPath);
 
-        // التحقق من أن مدة الفيديو أقل من 15 ثانية
-        const MAX_DURATION = 15; // الحد الأقصى للمدة بالثواني
+        // التحقق من أن مدة الفيديو أقل من 5 ثانية
+        const MAX_DURATION = 5; // الحد الأقصى للمدة بالثواني
         if (duration > MAX_DURATION) {
+
+            await fs.remove(inputPath);
             return {
                 success: false,
                 outputPath: '',
@@ -76,6 +78,7 @@ export async function convertVideoToWebp(inputPath, outputDir) {
         if (!outputExists) throw new Error('Conversion failed: WebP file not created.');
 
         // تنظيف الملفات المؤقتة
+        await fs.remove(inputPath);
         await fs.remove(tempDir);
 
         // إرجاع الكائن مع حالة النجاح والمسار

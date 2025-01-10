@@ -47,3 +47,49 @@ export const updateUserStats = async (phone, eventType, name = '') => {
         console.error('Error updating user stats:', error);
     }
 };
+
+
+/**
+ * استرجاع إحصائيات المستخدم
+ * @param {number} userId - معرف المستخدم.
+ * @returns {Promise<Object|null>} - إرجاع معلومات المستخدم أو null إذا لم يتم العثور عليه.
+ */
+export async function getUserStats(userId) {
+    try {
+        const user = await User.findOne({ where: { phone: userId } });
+        if (user) {
+            return {
+                name: user.name,
+                textMessagesCount: user.textMessagesCount,
+                imagesCount: user.imagesCount,
+                videosCount: user.videosCount,
+                stickersCount: user.stickersCount,
+            };
+        }
+        return null; // في حال لم يوجد المستخدم
+    } catch (error) {
+        console.error('Error fetching user stats:', error);
+        return null;
+    }
+}
+
+/**
+ * إرسال معلومات المستخدم
+ * @param {number} userId - معرف المستخدم.
+ * @param {Object} message - الكائن الذي يحتوي على الرسالة.
+ */
+export async function sendUserInfo(userId, message) {
+    const stats = await getUserStats(userId);
+    if (stats) {
+        const infoMessage = `📊 *معلوماتك الشخصية*\n\n` +
+            `*الاسم:* ${stats.name}\n` +
+            `*عدد الرسائل النصية:* ${stats.textMessagesCount}\n` +
+            `*عدد الصور:* ${stats.imagesCount}\n` +
+            `*عدد الفيديوهات:* ${stats.videosCount}\n` +
+            `*عدد الملصقات:* ${stats.stickersCount}\n`;
+        // هنا تقوم بإرسال الرسالة إلى المستخدم
+        await message.reply(infoMessage);
+    } else {
+        await message.reply('لم نتمكن من العثور على معلوماتك.');
+    }
+}

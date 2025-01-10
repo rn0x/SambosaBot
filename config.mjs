@@ -5,9 +5,11 @@ export const root = path.resolve(process.cwd()); // project root directory (./)
 
 export const config = {
 
-  adminPhoneNumber: process.env.ADMIN_PHONE_NUMBER,
-  defaultAuthor: process.env.DEFAULT_AUTHOR,
-  defaultTitle: process.env.DEFAULT_TITLE,
+  botPhoneNumber: process.env.BOT_PHONE_NUMBER, // رقم البوت مثل (966553******)
+  adminPhoneNumber: process.env.ADMIN_PHONE_NUMBER, // رقم المشرف مثل (966553556010)
+  defaultAuthor: process.env.DEFAULT_AUTHOR, // مؤلف الملصق الأفتراضي
+  defaultTitle: process.env.DEFAULT_TITLE, // عنوان الملصق الأفتراضي
+  sendWelcomeFarewellMessages: true, // لتفعيل رسائل الانظام والمغادرة للقروبات
 
   /* Config Database */
   DatabasePath: process.env.DATABASE_PATH || path.join(root, "src", "database", "database.sqlite"),
@@ -16,5 +18,7 @@ export const config = {
   paths: {
     root: root,
     logs: path.join(root, "src", "logs"),
+    filterConfig: path.join(root, "filterConfig.json"), // ملف الانماط لتصفيةاللإعلانات من القروب
+    badwords: path.join(root, "badwords.txt"), // ملف الكلمات المسيئة لتصفيتها من القروب
   },
 };

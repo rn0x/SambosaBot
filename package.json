@@ -1,5 +1,5 @@
 {
-  "name": "whatsapp-bot",
+  "name": "stickerworld",
   "version": "1.0.0",
   "main": "src/index.mjs",
   "scripts": {
@@ -10,17 +10,16 @@
   },
   "keywords": [],
   "author": {
-    "name": "whatsappBot",
+    "name": "rayan almalki (rn0x)",
     "email": "rn0x.me@gmail.com",
-    "url": "https://github.com/rn0x/whatsappBot"
+    "url": "https://github.com/rn0x/StickerWorld"
   },
-  "license": "GPL-3.0-only",
+  "license": "MIT",
   "type": "module",
   "nodemonConfig": {
     "ignore": [
-      "**/public/**",
       "**/logs/**",
-      "**/uploads/**",
+      "**/temp/**",
       "**/data/**"
     ]
   },

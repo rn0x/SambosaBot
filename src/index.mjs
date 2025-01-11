@@ -7,7 +7,7 @@ import path from 'path';
 import fs from 'fs-extra';
 import { config } from '../config.mjs'
 import { setStickerAuthor, setStickerTitle, getStickerRights } from './utils/stickerRights.mjs'
-import { convertVideoToWebp } from './utils/convertToWebp.mjs';
+import { convertVideoToWebp, getVideoDuration } from './utils/ffmpeg.mjs';
 import { sendUserInfo, updateUserStats } from './utils/userService.mjs'
 import { loadFilterConfig, filterMessage } from './utils/adFilter.mjs';
 import { checkForBadWords } from './utils/badWordsFilter.mjs';
@@ -99,31 +99,68 @@ client.on('message', async (message) => {
                 await updateUserStats(userId, 'image', userName);
                 const image = new MessageMedia('image/png', data, `${timestamp}.png`);
                 await message.reply(image, undefined, { sendMediaAsSticker: true, stickerAuthor: author, stickerName: title });
-            } else if (mimetype === 'video/mp4' && message.type === 'video' || mimetype === 'video/mp4' && message.type === 'document') {
-
-                await updateUserStats(userId, 'video', userName);
-                const inputPath = path.join(tempDir, `${timestamp}.mp4`);
+            } else if (mimetype === 'image/gif' && type === 'document') {
+                await updateUserStats(userId, 'image', userName);
+                // إنشاء ملف مؤقت للفيديو باستخدام fs-extra
+                const inputPath = path.join(tempDir, `${timestamp}.gif`);
                 const outputDir = tempDir;
 
-                // إنشاء ملف مؤقت للفيديو باستخدام fs-extra
                 await fs.ensureDir(tempDir);
                 await fs.writeFile(inputPath, dataBase64);
 
-                // تحويل الفيديو إلى WebP
-                const webpPath = await convertVideoToWebp(inputPath, outputDir);
+                // تحويل الفيديو إلى WebM
+                const webmPath = await convertVideoToWebp(inputPath, outputDir);
 
-                if (webpPath.success) {
-                    // قراءة ملف WebP كـ Base64 وإرساله كملصق
-                    const webpData = await fs.readFile(webpPath.outputPath, { encoding: 'base64' }).catch(() => { });
-                    const sticker = new MessageMedia('image/webp', webpData, 'sticker.webp');
+                if (webmPath.success) {
+                    // قراءة ملف WebM كـ Base64 وإرساله كملصق
+                    const webmData = await fs.readFile(webmPath.outputPath, { encoding: 'base64' }).catch(() => { });
+                    const sticker = new MessageMedia('image/webp', webmData, 'sticker.webp');
                     await message.reply(sticker, undefined, { sendMediaAsSticker: true, stickerAuthor: author, stickerName: title });
 
                     // تنظيف الملفات المؤقتة باستخدام fs-extra
-                    await fs.remove(webpPath.outputPath);
+                    await fs.remove(webmPath.outputPath);
                 } else {
-                    if (webpPath.error) {
-                        message.reply(webpPath.error);
-                        console.error('Conversion failed:', webpPath.error);
+                    if (webmPath.error) {
+                        message.reply(webmPath.error);
+                        console.error('فشل التحويل:', webmPath.error);
+                    }
+                }
+
+            } else if (mimetype === 'video/mp4' && message.type === 'video') {
+                await updateUserStats(userId, 'video', userName);
+
+                // إنشاء ملف مؤقت للفيديو باستخدام fs-extra
+                const inputPath = path.join(tempDir, `${timestamp}.mp4`);
+                const outputDir = tempDir;
+
+                await fs.ensureDir(tempDir);
+                await fs.writeFile(inputPath, dataBase64);
+
+                // الحصول على مدة الفيديو
+                const duration = await getVideoDuration(inputPath);
+
+                // التحقق من أن مدة الفيديو أقل من 5 ثانية
+                const MAX_DURATION = 5; // الحد الأقصى للمدة بالثواني
+                if (duration > MAX_DURATION) {
+                    await fs.remove(inputPath);
+                    return await message.reply(`الفيديو طويل جداً! الحد الأقصى للمدة هو ${MAX_DURATION} ثانية.`);
+                }
+
+                // تحويل الفيديو إلى WebM
+                const webmPath = await convertVideoToWebp(inputPath, outputDir);
+
+                if (webmPath.success) {
+                    // قراءة ملف WebM كـ Base64 وإرساله كملصق
+                    const webmData = await fs.readFile(webmPath.outputPath, { encoding: 'base64' }).catch(() => { });
+                    const sticker = new MessageMedia('image/webp', webmData, 'sticker.webp');
+                    await message.reply(sticker, undefined, { sendMediaAsSticker: true, stickerAuthor: author, stickerName: title });
+
+                    // تنظيف الملفات المؤقتة باستخدام fs-extra
+                    await fs.remove(webmPath.outputPath);
+                } else {
+                    if (webmPath.error) {
+                        message.reply(webmPath.error);
+                        console.error('فشل التحويل:', webmPath.error);
                     }
                 }
             } else {

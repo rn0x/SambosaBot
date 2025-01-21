@@ -52,10 +52,6 @@ export default async function convertWebpToGifAndMp4(inputPath, gifOutputPath, m
         const mp4Command = `ffmpeg -i "${gifOutputPath}" -c:v libx264 -pix_fmt yuv420p -crf 20 -preset veryfast -y "${mp4OutputPath}"`;
         const { stderr: mp4Error } = await execAsync(mp4Command);
 
-        if (mp4Error) {
-            throw new Error(`خطأ أثناء تحويل GIF إلى MP4: ${mp4Error}`);
-        }
-
         // حذف ملف GIF بعد التحويل إلى MP4
         await fs.remove(gifOutputPath);
         // حذف الملف المدخل بعد التحويل

@@ -4,10 +4,10 @@ export async function convertImageToStickerAuto(message, MessageMedia, messageMe
     try {
 
         if (!message.hasMedia) return
-        if (message?.type !== 'image') return
+        if (message?.type !== 'image' && message?.type !== 'document') return
 
         const media = await message.downloadMedia();
-        if (media.mimetype !== 'image/jpeg') return
+        if (media.mimetype !== 'image/jpeg' && media.mimetype !== 'image/png') return
 
         const uniqueId = Date.now(); // لتجنب تداخل الملفات
         const processedMedia = new MessageMedia('image/png', media.data, `${uniqueId}.png`);

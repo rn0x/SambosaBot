@@ -12,10 +12,10 @@ export async function convertImageToSticker(message, MessageMedia, messageMeta) 
         const getQuotedMessage = await message.getQuotedMessage();
 
         if (!getQuotedMessage.hasMedia) return
-        if (getQuotedMessage?.type !== 'image') return
+        if (getQuotedMessage?.type !== 'image' && getQuotedMessage?.type !== 'document') return
 
         const media = await getQuotedMessage.downloadMedia();
-        if (media.mimetype !== 'image/jpeg') return
+        if (media.mimetype !== 'image/jpeg' && media.mimetype !== 'image/png') return
 
         const uniqueId = Date.now(); // لتجنب تداخل الملفات
         const processedMedia = new MessageMedia('image/png', media.data, `${uniqueId}.png`);

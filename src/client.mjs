@@ -3,7 +3,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 import whatsappWeb from 'whatsapp-web.js';
-const { Client, LocalAuth, MessageMedia } = whatsappWeb;
+const { Client, LocalAuth, MessageMedia, Poll } = whatsappWeb;
 
 
 // تهيئة عميل WhatsApp
@@ -24,4 +24,5 @@ const client = new Client({
 export default client;
 export {
     MessageMedia,
+    Poll
 }

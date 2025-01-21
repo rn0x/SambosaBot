@@ -5,3 +5,4 @@ package-lock.json
 .wwebjs_cache
 temp
 database.sqlite
+quizData.json

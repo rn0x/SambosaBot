@@ -45,7 +45,7 @@ export function cleanupInactiveUsers() {
             delete usersLastMessageTime[userId];
             delete usersMessageCount[userId]; // إزالة عدد الرسائل عند التنظيف
             delete usersLastSpamAlertTime[userId]; // إزالة سجل التنبيه عند التنظيف
-            console.log(`تمت إزالة المستخدم ${userId} من سجل الرسائل`);
+            // console.log(`تمت إزالة المستخدم ${userId} من سجل الرسائل`);
         }
     }
 }

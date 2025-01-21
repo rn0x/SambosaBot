@@ -2,13 +2,14 @@ import { exec } from 'child_process';
 import { promisify } from 'util';
 import fs from 'fs-extra';
 import path from 'path';
+import os from 'os';
 
 const execAsync = promisify(exec);
 
 /**
  * تحويل ملف WebP إلى GIF ثم إلى MP4.
  * 
- * يقوم هذا الدالة بتحويل ملف WebP إلى صيغة GIF باستخدام برنامج `magick`، 
+ * يقوم هذا الدالة بتحويل ملف WebP إلى صيغة GIF باستخدام برنامج `magick` أو `convert` بناءً على النظام،
  * ومن ثم تحويل GIF إلى صيغة MP4 باستخدام `FFmpeg`، وأخيرًا حذف الملفات المؤقتة.
  * 
  * @param {string} inputPath - مسار ملف WebP المدخل.
@@ -35,18 +36,25 @@ export default async function convertWebpToGifAndMp4(inputPath, gifOutputPath, m
             throw new Error(`الملف المدخل "${inputPath}" غير موجود.`);
         }
 
+        // اختيار الأمر المناسب بناءً على النظام
+        const isWindows = os.platform() === 'win32';
+        const convertCommand = isWindows ? 'magick' : 'convert';
+
         // تحويل WebP إلى GIF
-        const gifCommand = `magick "${inputPath}" "${gifOutputPath}"`;
+        const gifCommand = `${convertCommand} "${inputPath}" "${gifOutputPath}"`;
         const { stderr: gifError } = await execAsync(gifCommand);
 
         if (gifError) {
             throw new Error(`خطأ أثناء تحويل WebP إلى GIF: ${gifError}`);
         }
 
-
         // تحويل GIF إلى MP4 باستخدام FFmpeg
         const mp4Command = `ffmpeg -i "${gifOutputPath}" -c:v libx264 -pix_fmt yuv420p -crf 20 -preset veryfast -y "${mp4OutputPath}"`;
         const { stderr: mp4Error } = await execAsync(mp4Command);
+
+        if (mp4Error) {
+            throw new Error(`خطأ أثناء تحويل GIF إلى MP4: ${mp4Error}`);
+        }
 
         // حذف ملف GIF بعد التحويل إلى MP4
         await fs.remove(gifOutputPath);

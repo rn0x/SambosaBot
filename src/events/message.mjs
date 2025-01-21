@@ -13,6 +13,7 @@ import { convertVideoToSticker } from '../processors/stickers/convertVideoToStic
 import { convertStickerToMedia } from '../processors/stickers/convertStickerToMedia.mjs';
 import { sendMenu } from '../processors/messages/sendMenu.mjs';
 import { handleSpam } from '../processors/spamHandler.mjs';
+import { convertImageToStickerCircle } from '../processors/stickers/convertImageToStickerCircle.mjs';
 
 export default function message() {
     client.on('message', async (message) => {
@@ -45,8 +46,9 @@ export default function message() {
 
             // جميع المعالجات أو الأوامر
             await convertImageToSticker(message, MessageMedia, messageMeta);
-            await convertVideoToSticker(message, MessageMedia, messageMeta);
+            await convertImageToStickerCircle(message, MessageMedia, messageMeta);
             await convertImageToStickerBg(message, MessageMedia, messageMeta);
+            await convertVideoToSticker(message, MessageMedia, messageMeta);
             await stealSticker(message, MessageMedia, messageMeta);
             await convertStickerToMedia(message, MessageMedia);
             await sendMenu(message, messageMeta);

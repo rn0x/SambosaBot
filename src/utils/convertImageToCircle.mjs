@@ -39,7 +39,7 @@ export default async function convertImageToCircle(inputPath, outputPath) {
             .composite([{ input: mask, blend: 'dest-in' }]) // دمج القناع مع الصورة
             .toFile(outputPath); // حفظ الصورة الناتجة
 
-        console.log(`تم تحويل الصورة إلى دائرة بنجاح. الصورة محفوظة في ${outputPath}`);
+        // console.log(`تم تحويل الصورة إلى دائرة بنجاح. الصورة محفوظة في ${outputPath}`);
     } catch (err) {
         // التعامل مع الأخطاء بشكل صحيح
         console.error('حدث خطأ أثناء تحويل الصورة:', err.message);

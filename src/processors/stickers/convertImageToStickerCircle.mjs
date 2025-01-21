@@ -5,6 +5,7 @@ import path from 'path';
 import { config } from '../../../config.mjs';
 import hasMatchingKeywords from '../../utils/hasMatchingKeywords.mjs';
 import convertImageToCircle from '../../utils/convertImageToCircle.mjs';
+import { exec } from 'child_process';
 
 export async function convertImageToStickerCircle(message, MessageMedia, messageMeta) {
     try {
@@ -17,22 +18,47 @@ export async function convertImageToStickerCircle(message, MessageMedia, message
         const getQuotedMessage = await message.getQuotedMessage();
 
         if (!getQuotedMessage.hasMedia) return;
-        if (getQuotedMessage?.type !== 'image') return;
+        const mediaType = getQuotedMessage?.type;
 
-        const media = await getQuotedMessage.downloadMedia();
-        if (media.mimetype !== 'image/jpeg') return;
-
+        let inputPath, outputPath;
         const uniqueId = Date.now(); // لتجنب تداخل الملفات
         const tempDir = config.paths.temp; // مسار مجلد الصور
-        const inputPath = path.resolve(tempDir, `input-${uniqueId}.png`); // مسار الصورة المدخلة
-        const outputPath = path.resolve(tempDir, `output-circle-${uniqueId}.png`); // مسار الصورة الناتجة
+        inputPath = path.resolve(tempDir, `input-${uniqueId}`); // مسار الصورة المدخلة
+        outputPath = path.resolve(tempDir, `output-circle-${uniqueId}.png`); // مسار الصورة الناتجة
 
         await fs.ensureDir(tempDir);
-        // حفظ الصورة في ملف مؤقت
-        await fs.outputFile(inputPath, media.data, 'base64');
+        
+        if (mediaType === 'image') {
+            // إذا كانت الميديا صورة، حفظ الصورة مباشرة
+            const media = await getQuotedMessage.downloadMedia();
+            await fs.outputFile(inputPath + '.png', media.data, 'base64');
+        } else if (mediaType === 'video') {
+            // إذا كانت الميديا فيديو، استخراج أول إطار أو عدة إطارات
+            const media = await getQuotedMessage.downloadMedia();
+            if (media.mimetype !== 'video/mp4') return;
 
-        // تحويل الصورة إلى دائرة باستخدام الوظيفة
-        await convertImageToCircle(inputPath, outputPath);
+            const tempVideoPath = path.resolve(tempDir, `video-${uniqueId}.mp4`);
+            await fs.outputFile(tempVideoPath, media.data, 'base64');
+
+            // استخراج أول إطار من الفيديو (أو 5 إطارات)
+            await new Promise((resolve, reject) => {
+                const command = `ffmpeg -i ${tempVideoPath} -vf "fps=1" -vframes 1 ${inputPath}.png`;
+                exec(command, (error, stdout, stderr) => {
+                    if (error) {
+                        console.error(`Error extracting frame from video: ${stderr}`);
+                        reject(new Error('فشل في استخراج الإطار من الفيديو'));
+                    } else {
+                        console.log(`تم استخراج الإطار بنجاح من الفيديو`);
+                        resolve();
+                    }
+                });
+            });
+
+            await fs.remove(tempVideoPath); // حذف الفيديو المؤقت
+        }
+
+        // تحويل الصورة (أو الإطار من الفيديو) إلى دائرة باستخدام الوظيفة
+        await convertImageToCircle(inputPath + '.png', outputPath);
 
         // قراءة الصورة الناتجة
         const imageBuffer = await fs.readFile(outputPath);
@@ -43,14 +69,13 @@ export async function convertImageToStickerCircle(message, MessageMedia, message
         await message.reply(processedMedia, undefined, { sendMediaAsSticker: true, stickerAuthor: config.defaultAuthor, stickerName: messageMeta.pushname || messageMeta.number });
 
         // إرجاع رد للمستخدم
-        await message.reply("🎉 *تم تحويل الصورة إلى ملصق دائري بنجاح!* ✨\n📽️ استمتع بالملصق!");
+        await message.reply("✨ *تم تحويل الصورة إلى ملصق دائري بنجاح!* ✨\n🎉 استمتع بالملصق!");
 
         // حذف الملفات المؤقتة
-        await fs.remove(inputPath);
+        await fs.remove(inputPath + '.png');
         await fs.remove(outputPath);
     } catch (error) {
         console.error('Error converting image to circular sticker:', error);
-        await message.reply(`فشل في تحويل الصورة إلى ملصق دائري: ${error.message}`);
         throw error;
     }
 }

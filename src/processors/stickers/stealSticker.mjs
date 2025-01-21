@@ -24,8 +24,8 @@ export async function stealSticker(message, MessageMedia, messageMeta) {
         const processedMedia = new MessageMedia('image/webp', media.data, `sticker-${uniqueId}.webp`);
         const stickerOptions = {
             sendMediaAsSticker: true,
-            stickerAuthor: config.defaultAuthor,
-            stickerName: messageMeta.pushname || messageMeta.number
+            stickerAuthor: messageMeta.pushname || messageMeta.number,
+            stickerName: config.stickerName
         };
 
         // إرسال الملصق الجديد

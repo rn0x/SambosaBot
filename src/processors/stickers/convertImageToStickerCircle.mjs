@@ -65,7 +65,7 @@ export async function convertImageToStickerCircle(message, MessageMedia, message
         const processedMedia = new MessageMedia('image/png', base64Image, 'processed-circle-sticker.png');
 
         // إرسال الصورة المعدلة كملصق
-        await message.reply(processedMedia, undefined, { sendMediaAsSticker: true, stickerAuthor: config.defaultAuthor, stickerName: messageMeta.pushname || messageMeta.number });
+        await message.reply(processedMedia, undefined, { sendMediaAsSticker: true, stickerAuthor: messageMeta.pushname || messageMeta.number, stickerName: config.stickerName });
 
         // إرجاع رد للمستخدم
         await message.reply("✨ *تم تحويل الصورة إلى ملصق دائري بنجاح!* ✨\n🎉 استمتع بالملصق!");

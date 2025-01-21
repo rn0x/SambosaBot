@@ -28,8 +28,8 @@ export async function convertVideoToStickerAuto(message, MessageMedia, messageMe
             const videoBuffer = await fs.readFile(video.outputPath);
             const base64Video = videoBuffer.toString('base64');
             const processedMedia = new MessageMedia('image/webp', base64Video, `${uniqueId}.webp`);
-            // await client.sendMessage(message.from, processedMedia, { sendMediaAsSticker: true, stickerAuthor: config.defaultAuthor, stickerName: messageMeta.pushname || messageMeta.number });
-            await message.reply(processedMedia, undefined, { sendMediaAsSticker: true, stickerAuthor: config.defaultAuthor, stickerName: messageMeta.pushname || messageMeta.number });
+            // await client.sendMessage(message.from, processedMedia, { sendMediaAsSticker: true, stickerAuthor: messageMeta.pushname || messageMeta.number, stickerName: config.stickerName });
+            await message.reply(processedMedia, undefined, { sendMediaAsSticker: true, stickerAuthor: messageMeta.pushname || messageMeta.number, stickerName: config.stickerName });
             await message.reply("🎬 *تم تحويل الفيديو إلى ملصق متحرك بنجاح!* ✨\n🎉 استمتع بالملصق!");
             await fs.remove(video.outputPath);
         }

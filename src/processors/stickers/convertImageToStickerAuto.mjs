@@ -13,7 +13,7 @@ export async function convertImageToStickerAuto(message, MessageMedia, messageMe
         const processedMedia = new MessageMedia('image/png', media.data, `${uniqueId}.png`);
         // إرسال الصورة المعدلة
         // await client.sendMessage(message.from, processedMedia, { sendMediaAsSticker: true, stickerAuthor: author, stickerName: title });
-        await message.reply(processedMedia, undefined, { sendMediaAsSticker: true, stickerAuthor: config.defaultAuthor, stickerName: messageMeta.pushname || messageMeta.number });
+        await message.reply(processedMedia, undefined, { sendMediaAsSticker: true, stickerAuthor: messageMeta.pushname || messageMeta.number, stickerName: config.stickerName });
         await message.reply("✨ *تم تحويل الصورة إلى ملصق بنجاح!* ✨\n📤 تم إرسال الملصق إليك!");
     } catch (error) {
         console.error('Error converting image to sticker:', error);

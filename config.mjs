@@ -7,7 +7,7 @@ export const config = {
 
   /* Config Database */
   DatabasePath: process.env.DATABASE_PATH || path.join(root, "src", "database", "database.sqlite"),
-  defaultAuthor: process.env.DEFAULT_AUTHOR,
+  stickerName: process.env.DEFAULT_AUTHOR,
 
   /* Paths */
   paths: {

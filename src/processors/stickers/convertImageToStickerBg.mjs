@@ -37,7 +37,7 @@ export async function convertImageToStickerBg(message, MessageMedia, messageMeta
             const processedMedia = new MessageMedia('image/png', base64Image, 'processed-image.png');
             // إرسال الصورة المعدلة
             // await client.sendMessage(message.from, processedMedia, { sendMediaAsSticker: true, stickerAuthor: config.defaultAuthor, stickerName: messageMeta.pushname || messageMeta.number });
-            await message.reply(processedMedia, undefined, { sendMediaAsSticker: true, stickerAuthor: config.defaultAuthor, stickerName: messageMeta.pushname || messageMeta.number });
+            await message.reply(processedMedia, undefined, { sendMediaAsSticker: true, stickerAuthor: messageMeta.pushname || messageMeta.number, stickerName: config.stickerName });
             await message.reply("✨ *تم تحويل الصورة إلى ملصق بنجاح بعد إزالة الخلفية!* ✨\n🎉 الملصق جاهز الآن!");
             // حذف الملفات المؤقتة
             await fs.remove(result.outputPath);

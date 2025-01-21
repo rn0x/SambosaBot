@@ -22,7 +22,7 @@ export async function convertImageToSticker(message, MessageMedia, messageMeta) 
         // إرسال الصورة المعدلة
         // await client.sendMessage(message.from, processedMedia, { sendMediaAsSticker: true, stickerAuthor: author, stickerName: title });
         await message.reply(processedMedia, undefined, { sendMediaAsSticker: true, stickerAuthor: messageMeta.pushname || messageMeta.number, stickerName: config.stickerName });
-        await message.reply("✨ *تم تحويل الصورة إلى ملصق بنجاح!* ✨\n📤 تم إرسال الملصق إليك!");
+        await message.reply("*تم تحويل الصورة إلى ملصق بنجاح!* 🎁");
     } catch (error) {
         console.error('Error converting image to sticker:', error);
         await message.reply(`Error converting image to sticker: ${error}`);

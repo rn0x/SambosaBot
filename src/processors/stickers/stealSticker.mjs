@@ -10,7 +10,7 @@ export async function stealSticker(message, MessageMedia, messageMeta) {
         const hasQuotedMsg = message.hasQuotedMsg;
         if (!hasQuotedMsg) return;
 
-        const keywords = ["!اسرق", "!أسرق", "!آسرق", "!سرقه", "!steal", "!stealsticker"];
+        const keywords = ["!اسرق", "!أسرق", "!آسرق", "!سرقه", "!سرقة", "!steal", "!stealsticker"];
         if (!hasMatchingKeywords(message.body, keywords)) return;
 
         const quotedMessage = await message.getQuotedMessage();

@@ -30,7 +30,7 @@ export async function stealSticker(message, MessageMedia, messageMeta) {
 
         // إرسال الملصق الجديد
         await message.reply(processedMedia, undefined, stickerOptions);
-        await message.reply("🎉 تم سرقة الملصق بنجاح! 🎉\n📜 بواسطة: " + stickerOptions.stickerName);
+        await message.reply("🎉 تم سرقة الملصق بنجاح! 🎉\n📜 بواسطة: " + stickerOptions.stickerAuthor);
     } catch (error) {
         console.error('Error stealing sticker:', error);
         await message.reply(`Error stealing sticker: ${error.message}`);

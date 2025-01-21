@@ -38,7 +38,7 @@ export async function convertStickerToMedia(message, MessageMedia) {
             const processedMedia = new MessageMedia('image/png', base64File, `${uniqueId}.png`);
             // إرسال الصورة المعدلة
             await message.reply(processedMedia);
-            await message.reply("🔄 **تم تحويل الملصق بنجاح!** 🎉\n📽️ استمتع بالصورة!");
+            await message.reply("🔄 *تم تحويل الملصق بنجاح!* 🎉\n📽️ استمتع بالصورة!");
             await fs.remove(inputFilePath);
 
         } else {
@@ -50,7 +50,7 @@ export async function convertStickerToMedia(message, MessageMedia) {
             const processedMedia = new MessageMedia('video/mp4', base64File, `${uniqueId}.mp4`);
             // إرسال الصورة المعدلة
             await message.reply(processedMedia, undefined, { caption: result.message, sendVideoAsGif: true });
-            await message.reply("🔄 **تم تحويل الملصق بنجاح!** 🎉\n📽️ استمتع بالفيديو المتحرك!");
+            await message.reply("🔄 *تم تحويل الملصق بنجاح!* 🎉\n📽️ استمتع بالفيديو المتحرك!");
             await fs.remove(result.outputPath);
         }
 

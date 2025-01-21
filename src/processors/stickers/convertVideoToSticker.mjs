@@ -37,7 +37,7 @@ export async function convertVideoToSticker(message, MessageMedia, messageMeta) 
             const processedMedia = new MessageMedia('image/webp', base64Video, `${uniqueId}.webp`);
             // await client.sendMessage(message.from, processedMedia, { sendMediaAsSticker: true, stickerAuthor: config.defaultAuthor, stickerName: messageMeta.pushname || messageMeta.number });
             await message.reply(processedMedia, undefined, { sendMediaAsSticker: true, stickerAuthor: config.defaultAuthor, stickerName: messageMeta.pushname || messageMeta.number });
-            await message.reply("🎬 **تم تحويل الفيديو إلى ملصق متحرك بنجاح!** ✨\n🎉 استمتع بالملصق!");
+            await message.reply("🎬 *تم تحويل الفيديو إلى ملصق متحرك بنجاح!* ✨\n🎉 استمتع بالملصق!");
             await fs.remove(video.outputPath);
         }
 

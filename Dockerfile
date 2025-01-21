@@ -5,16 +5,20 @@ FROM node:16-alpine
 WORKDIR /usr/src/app
 
 # نسخ ملفات المشروع إلى الحاوية
-COPY package*.json ./
-COPY .env ./
-COPY config.mjs ./
+COPY package*.json ./ 
+COPY .env ./ 
+COPY config.mjs ./ 
 
 # تثبيت التبعيات
 RUN npm install
 
 # تثبيت المتطلبات الخاصة بـ rembg عبر pip
 RUN apk add --no-cache python3 py3-pip ffmpeg imagemagick
-RUN pip3 install "rembg[cli]"
+RUN python3 -m ensurepip --upgrade
+RUN python3 -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+RUN pip install --upgrade pip
+RUN pip install "rembg[cli]"
 
 # نسخ باقي الملفات إلى الحاوية
 COPY . .

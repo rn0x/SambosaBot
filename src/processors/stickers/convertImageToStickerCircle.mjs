@@ -48,7 +48,6 @@ export async function convertImageToStickerCircle(message, MessageMedia, message
                         console.error(`Error extracting frame from video: ${stderr}`);
                         reject(new Error('فشل في استخراج الإطار من الفيديو'));
                     } else {
-                        console.log(`تم استخراج الإطار بنجاح من الفيديو`);
                         resolve();
                     }
                 });

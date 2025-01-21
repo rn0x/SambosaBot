@@ -40,8 +40,8 @@ export default function message() {
             await handleSpam(message, messageMeta);
 
             // نلقائي يعمل في قروبات معينة فقط
-            // messageMeta.isGroup && groupIDs.includes(messageMeta.id) - ميزة في المستقبل | السماح لقروبات معينة فقط
-            if (messageMeta.isGroup) {
+            // اذا اردت ان يعمل في جميع القروبات قم بحذف الشرط  && groupIDs.includes(messageMeta.id)
+            if (messageMeta.isGroup && groupIDs.includes(messageMeta.id)) {
                 await convertImageToStickerAuto(message, MessageMedia, messageMeta);
                 await convertVideoToStickerAuto(message, MessageMedia, messageMeta);
             }

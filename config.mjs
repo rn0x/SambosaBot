@@ -5,20 +5,19 @@ export const root = path.resolve(process.cwd()); // project root directory (./)
 
 export const config = {
 
-  botPhoneNumber: process.env.BOT_PHONE_NUMBER, // رقم البوت مثل (966553******)
-  adminPhoneNumber: process.env.ADMIN_PHONE_NUMBER, // رقم المشرف مثل (966553556010)
-  defaultAuthor: process.env.DEFAULT_AUTHOR, // مؤلف الملصق الأفتراضي
-  defaultTitle: process.env.DEFAULT_TITLE, // عنوان الملصق الأفتراضي
-  sendWelcomeFarewellMessages: true, // لتفعيل رسائل الانظام والمغادرة للقروبات
-
   /* Config Database */
   DatabasePath: process.env.DATABASE_PATH || path.join(root, "src", "database", "database.sqlite"),
+  defaultAuthor: process.env.DEFAULT_AUTHOR,
 
   /* Paths */
   paths: {
     root: root,
     logs: path.join(root, "src", "logs"),
-    filterConfig: path.join(root, "filterConfig.json"), // ملف الانماط لتصفيةاللإعلانات من القروب
-    badwords: path.join(root, "badwords.txt"), // ملف الكلمات المسيئة لتصفيتها من القروب
+    temp: path.join(root, "temp"),
   },
+
+  allowedGroups: [
+    "1234567890-1234567890@g.us",
+    "9876543210-9876543210@g.us"
+  ],
 };

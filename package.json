@@ -1,16 +1,23 @@
 {
   "name": "stickerworld",
+  "description": "بوت لتحويل الصور والفيديوهات إلى ملصقات، إدارة القروبات، وتنفيذ مهام أخرى.",
   "version": "1.0.0",
-  "main": "src/index.mjs",
+  "main": "index.js",
   "scripts": {
     "start": "node src/index.mjs",
     "dev": "nodemon src/index.mjs",
-    "commit": "node src/scripts/autoCommit.mjs",
-    "initDatabase": "node src/scriptS/initDB.mjs"
+    "commit": "node scripts/autoCommit.mjs",
+    "install:rembg": "node scripts/install-rembg-dependencies.mjs"
   },
-  "keywords": [],
+  "keywords": [
+    "whatsapp",
+    "bot",
+    "stickers",
+    "whatsapp-web",
+    "image-processing"
+  ],
   "author": {
-    "name": "rayan almalki (rn0x)",
+    "name": "Rayan Almalki (rn0x)",
     "email": "rn0x.me@gmail.com",
     "url": "https://github.com/rn0x/StickerWorld"
   },
@@ -28,6 +35,7 @@
   },
   "dependencies": {
     "dotenv": "^16.4.7",
+    "filetype": "^0.1.0",
     "qrcode-terminal": "^0.12.0",
     "sequelize": "^6.37.5",
     "whatsapp-web.js": "^1.26.0"

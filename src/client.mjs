@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 import whatsappWeb from 'whatsapp-web.js';
 const { Client, LocalAuth, MessageMedia, Poll } = whatsappWeb;
+import { config } from '../config.mjs'
 
 
 // تهيئة عميل WhatsApp
@@ -17,7 +18,7 @@ const client = new Client({
             "--disable-dev-shm-usage",  // تعطيل استخدام الذاكرة المشتركة
         ],
         timeout: 60000,
-        executablePath: process.env.EXECUTABLE_PATH || undefined,
+        executablePath: config.PuppeteerPath || undefined,
     }
 });
 

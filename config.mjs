@@ -7,12 +7,17 @@ export const config = {
 
   /* Config Database */
   DatabasePath: process.env.DATABASE_PATH || path.join(root, "src", "database", "database.sqlite"),
+
+
+  /* Config bot */
+  PuppeteerPath: process.env.PUPPETEER_EXECUTABLE_PATH,
   stickerName: process.env.DEFAULT_AUTHOR,
 
   /* Paths */
   paths: {
     root: root,
-    logs: path.join(root, "src", "logs"),
+    public: path.join(root, "src", "public"),
+    logs: path.join(root, "logs"),
     temp: path.join(root, "temp"),
   },
 

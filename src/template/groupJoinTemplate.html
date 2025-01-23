@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Group Join Notification</title>
+    <style>
+        @font-face {
+            font-family: "Cairo";
+            src: url("{{fontCairoBase64}}") format("truetype");
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #00000000;
+            height: 100vh;
+        }
+
+        * {
+            font-family: 'Cairo', Arial, sans-serif;
+        }
+
+        .container {
+            width: 600px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background-color: #25D366;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .content {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .profile-pictures {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .profile-pictures img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 0 10px;
+            border: 3px solid #ddd;
+        }
+
+        .details {
+            text-align: center;
+        }
+
+        .details h2 {
+            margin: 10px 0;
+            color: #333;
+        }
+
+        .details p {
+            margin: 5px 0;
+            color: #555;
+        }
+
+        .footer {
+            background-color: #f9fafb;
+            text-align: center;
+            padding: 15px;
+            font-size: 14px;
+            color: #888;
+        }
+
+        .footer a {
+            color: #25D366;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header" dir="rtl">
+            <h1>أهلاً وسهلاً بك في القروب!</h1>
+        </div>
+        <div class="content">
+            <div class="profile-pictures">
+                <img src="{{userPicture}}" alt="User Picture">
+                <img src="{{groupPicture}}" alt="Group Picture">
+            </div>
+            <div class="details">
+                <h2>{{name}}</h2>
+                <p>Phone: {{phone}}</p>
+                <p>Group Name: <span style="color: #25D366; font-weight: bold;">{{groupName}}</span></p>
+                <p>Group ID: {{groupId}}</p>
+            </div>
+        </div>
+        <div class="footer">
+            Powered by <a href="https://rn0x.me" target="_blank">SamBosaBot</a>
+        </div>
+    </div>
+</body>
+
+</html>

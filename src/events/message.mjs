@@ -1,6 +1,5 @@
 // /events/message.mjs
 
-import client, { MessageMedia, Poll } from '../client.mjs';
 import path from 'path';
 import fs from 'fs-extra';
 import { config } from '../../config.mjs';
@@ -17,7 +16,7 @@ import { convertImageToStickerCircle } from '../processors/stickers/convertImage
 import IslamicQuiz from '../processors/IslamicQuiz.mjs';
 import checkAnswer from '../processors/checkAnswer.mjs';
 
-export default function message() {
+export default function message(client, MessageMedia, Poll) {
     client.on('message', async (message) => {
         try {
             const groupIDs = config.allowedGroups;

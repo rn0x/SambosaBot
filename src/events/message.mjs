@@ -19,23 +19,11 @@ import IslamicQuiz from '../processors/IslamicQuiz.mjs';
 import checkAnswer from '../processors/checkAnswer.mjs';
 
 export default function message(client, MessageMedia, Poll) {
-    client.on('message_create', async (message) => {
+    client.on('message', async (message) => {
         try {
             const groupIDs = config.allowedGroups;
             const getChat = await message.getChat();
             const getContact = await message.getContact();
-            // const participants = await client.getGroupMembershipRequests(message.from);
-            const isAdmin = async () => {
-                if (!getChat.participants) {
-                    console.error('Participants not found!');
-                    return false;
-                }
-                return getChat.participants.some(
-                    (participant) => {
-                        return participant.isAdmin && participant.id.user === getContact.number
-                    });
-            };
-
             // تجميع المعلومات في كائن واحد
             const messageMeta = {
                 pushname: getContact.pushname || getContact.verifiedName || message._data.notifyName,
@@ -46,15 +34,11 @@ export default function message(client, MessageMedia, Poll) {
                 deviceType: message.deviceType,
                 isGroup: message.from.includes('@g.us'),
                 chatName: getChat.name,
-                isAdmin: await isAdmin(),
             };
 
             // التعامل مع الروابط
             if (messageMeta.isGroup && /https?:\/\/\S+/i.test(message.body)) {
-                if (!messageMeta.isAdmin) {
-                    await message.delete(true).catch(() => { }); // حذف الرسالة
-                    return;
-                }
+                return await message.delete(true).catch(() => { }); // حذف الرسالة
             }
 
             // التعامل مع السبام

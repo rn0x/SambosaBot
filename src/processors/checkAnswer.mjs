@@ -2,6 +2,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import hasMatchingKeywords from "../utils/hasMatchingKeywords.mjs";
+import logger from '../utils/logger.mjs'
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -30,6 +31,7 @@ export default async function checkAnswer(message) {
                 quizData = [];
                 await fs.writeJson(quizDataPath, quizData);
             } else {
+                logger.error('Unexpected end of JSON input', error)
                 throw error;
             }
         }
@@ -43,6 +45,6 @@ export default async function checkAnswer(message) {
             await message.reply("⚠️ لم أتمكن من العثور على بيانات الاستفتاء لهذا السؤال.");
         }
     } catch (error) {
-        console.error("Error in checkAnswer:", error);
+        logger.error("Error in checkAnswer:", error);
     }
 }

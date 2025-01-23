@@ -2,6 +2,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import hasMatchingKeywords from '../utils/hasMatchingKeywords.mjs';
+import logger from '../utils/logger.mjs'
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -67,7 +68,7 @@ export default async function IslamicQuiz(message, Poll) {
             try {
                 quizData = await fs.readJson(quizDataPath);
             } catch (error) {
-                console.error('Invalid JSON format, initializing with empty data:', error);
+                logger.error('Invalid JSON format, initializing with empty data:', error);
                 quizData = []; // إعادة تهيئة المصفوفة في حال كان التنسيق غير صالح
             }
         }
@@ -85,6 +86,6 @@ export default async function IslamicQuiz(message, Poll) {
         await fs.writeJson(quizDataPath, quizData);
 
     } catch (error) {
-        console.error('Failed to send quiz question:', error);
+        logger.error('Failed to send quiz question:', error);
     }
 }

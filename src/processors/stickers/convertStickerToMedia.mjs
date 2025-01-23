@@ -3,6 +3,7 @@ import path from 'path';
 import { config } from '../../../config.mjs'
 import hasMatchingKeywords from '../../utils/hasMatchingKeywords.mjs';
 import convertWebpToGifAndMp4 from '../../utils/convertWebpToGifAndMp4.mjs';
+import logger from '../../utils/logger.mjs'
 
 export async function convertStickerToMedia(message, MessageMedia) {
     try {
@@ -55,8 +56,8 @@ export async function convertStickerToMedia(message, MessageMedia) {
         }
 
     } catch (error) {
-        console.error('Error converting image to sticker:', error);
-        await message.reply(`Error converting sticker to gif or image: ${error}`);
+        logger.error('Error converting image to sticker:', error);
+        // await message.reply(`Error converting sticker to gif or image: ${error}`);
         throw error;
     }
 }

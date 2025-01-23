@@ -6,6 +6,7 @@ import { config } from '../../../config.mjs';
 import hasMatchingKeywords from '../../utils/hasMatchingKeywords.mjs';
 import convertImageToCircle from '../../utils/convertImageToCircle.mjs';
 import { exec } from 'child_process';
+import logger from '../../utils/logger.mjs'
 
 export async function convertImageToStickerCircle(message, MessageMedia, messageMeta) {
     try {
@@ -45,7 +46,7 @@ export async function convertImageToStickerCircle(message, MessageMedia, message
                 const command = `ffmpeg -i ${tempVideoPath} -vf "fps=1" -vframes 1 ${inputPath}.png`;
                 exec(command, (error, stdout, stderr) => {
                     if (error) {
-                        console.error(`Error extracting frame from video: ${stderr}`);
+                        logger.error(`Error extracting frame from video: ${stderr}`);
                         reject(new Error('فشل في استخراج الإطار من الفيديو'));
                     } else {
                         resolve();
@@ -74,7 +75,7 @@ export async function convertImageToStickerCircle(message, MessageMedia, message
         await fs.remove(inputPath + '.png');
         await fs.remove(outputPath);
     } catch (error) {
-        console.error('Error converting image to circular sticker:', error);
+        logger.error('Error converting image to circular sticker:', error);
         throw error;
     }
 }

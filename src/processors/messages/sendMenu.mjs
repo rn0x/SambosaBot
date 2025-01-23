@@ -2,6 +2,8 @@
 
 import { config } from '../../../config.mjs'
 import hasMatchingKeywords from '../../utils/hasMatchingKeywords.mjs';
+import logger from '../../utils/logger.mjs'
+
 
 export async function sendMenu(message, messageMeta) {
     try {
@@ -27,8 +29,8 @@ export async function sendMenu(message, messageMeta) {
         menuText += `اختر الأمر الذي تود استخدامه! 😄`;
 
         // إرسال الرسالة
-        await message.reply(menuText);
+        return await message.reply(menuText);
     } catch (error) {
-        console.error('Error sending menu response:', error);
+        logger.error('Error sending menu response:', error);
     }
 }

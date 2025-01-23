@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import { config } from '../../../config.mjs'
 import convertVideoToWebp from '../../utils/convertVideoToWebp.mjs'
-
+import logger from '../../utils/logger.mjs'
 
 export async function convertVideoToStickerAuto(message, MessageMedia, messageMeta) {
     try {
@@ -36,7 +36,7 @@ export async function convertVideoToStickerAuto(message, MessageMedia, messageMe
 
         await fs.remove(inputPath);
     } catch (error) {
-        console.error('Error converting video to sticker:', error);
+        logger.error('Error converting video to sticker:', error);
         throw error;
     }
 }

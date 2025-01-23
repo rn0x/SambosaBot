@@ -3,6 +3,7 @@ import path from 'path';
 import { config } from '../../../config.mjs'
 import convertVideoToWebp from '../../utils/convertVideoToWebp.mjs'
 import hasMatchingKeywords from '../../utils/hasMatchingKeywords.mjs';
+import logger from '../../utils/logger.mjs'
 
 export async function convertVideoToSticker(message, MessageMedia, messageMeta) {
     try {
@@ -42,7 +43,7 @@ export async function convertVideoToSticker(message, MessageMedia, messageMeta) 
 
         await fs.remove(inputPath);
     } catch (error) {
-        console.error('Error converting video to sticker:', error);
+        logger.error('Error converting video to sticker:', error);
         throw error;
     }
 }

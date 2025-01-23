@@ -5,6 +5,7 @@ import path from 'path';
 import fs from 'fs-extra';
 import { generateImageFromHtml } from '../utils/generateImage.mjs';
 import { config } from '../../config.mjs'
+import logger from '../utils/logger.mjs'
 
 export default function groupJoin(client, MessageMedia) {
     client.on('group_join', async (e) => {
@@ -80,7 +81,7 @@ export default function groupJoin(client, MessageMedia) {
             }, 2 * 60 * 1000);
 
         } catch (error) {
-            console.error('Error in group_join event:', error);
+            logger.error('Error in group_join event:', error);
         }
     });
 }

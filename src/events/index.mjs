@@ -1,6 +1,5 @@
 // /events/index.mjs
 import logger from '../utils/logger.mjs'
-
 import authenticated from "./authenticated.mjs";
 import authFailure from "./authFailure.mjs";
 import groupJoin from "./groupJoin.mjs";

@@ -4,6 +4,7 @@ import path from 'path';
 import fs from 'fs-extra';
 import { config } from '../../../config.mjs'
 import hasMatchingKeywords from '../../utils/hasMatchingKeywords.mjs';
+import logger from '../../utils/logger.mjs'
 
 export async function stealSticker(message, MessageMedia, messageMeta) {
     try {
@@ -32,8 +33,8 @@ export async function stealSticker(message, MessageMedia, messageMeta) {
         await message.reply(processedMedia, undefined, stickerOptions);
         await message.reply("🎉 تم سرقة الملصق بنجاح! 🎉\n📜 بواسطة: " + stickerOptions.stickerAuthor);
     } catch (error) {
-        console.error('Error stealing sticker:', error);
-        await message.reply(`Error stealing sticker: ${error.message}`);
+        logger.error('Error stealing sticker:', error);
+        // await message.reply(`Error stealing sticker: ${error.message}`);
         throw error;
     }
 }

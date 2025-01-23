@@ -4,6 +4,7 @@ import path from 'path';
 import fs from 'fs-extra';
 import client from '../client.mjs'
 import { config } from '../../config.mjs';
+import logger from '../utils/logger.mjs'
 import { convertImageToStickerBg } from '../processors/stickers/convertImageToStickerBg.mjs';
 import { stealSticker } from '../processors/stickers/stealSticker.mjs';
 import { convertVideoToStickerAuto } from '../processors/stickers/convertVideoToStickerAuto.mjs';
@@ -23,7 +24,7 @@ export default function message(client, MessageMedia, Poll) {
             const groupIDs = config.allowedGroups;
             const getChat = await message.getChat();
             const getContact = await message.getContact();
-            const participants = await client.getGroupMembershipRequests(message.from);
+            // const participants = await client.getGroupMembershipRequests(message.from);
             const isAdmin = async () => {
                 if (!getChat.participants) {
                     console.error('Participants not found!');
@@ -80,7 +81,7 @@ export default function message(client, MessageMedia, Poll) {
             // await message.reply(new Poll('Winter or Summer?', ['Winter', 'Summer']));
 
         } catch (error) {
-            console.error('Error processing message:', error);
+            logger.error('Error processing message:', error);
         }
     });
 }

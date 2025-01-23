@@ -5,6 +5,7 @@ import path from 'path';
 import { config } from '../../../config.mjs'
 import hasMatchingKeywords from '../../utils/hasMatchingKeywords.mjs';
 import removeBackground from '../../utils/removeBackground.mjs'
+import logger from '../../utils/logger.mjs'
 
 export async function convertImageToStickerBg(message, MessageMedia, messageMeta) {
     try {
@@ -40,13 +41,13 @@ export async function convertImageToStickerBg(message, MessageMedia, messageMeta
             await message.reply(processedMedia, undefined, { sendMediaAsSticker: true, stickerAuthor: messageMeta.pushname || messageMeta.number, stickerName: config.stickerName });
             await message.reply("*تم تحويل الصورة إلى ملصق بنجاح بعد إزالة الخلفية!* 🎁");
             // حذف الملفات المؤقتة
-            await fs.remove(result.outputPath);
+            return await fs.remove(result.outputPath);
         } else {
-            await message.reply('Failed to remove background.');
+            return await message.reply('Failed to remove background.');
         }
     } catch (error) {
-        console.error('Error converting image to sticker:', error);
-        await message.reply(`Error converting image to sticker: ${error}`);
+        logger.error('Error converting image to sticker:', error);
+        // await message.reply(`Error converting image to sticker: ${error}`);
         throw error;
     }
 }

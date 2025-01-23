@@ -6,3 +6,4 @@ package-lock.json
 temp
 database.sqlite
 quizData.json
+logs

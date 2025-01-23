@@ -62,7 +62,7 @@ export default function groupJoin(client, MessageMedia) {
             );
 
             let welcomeMessage = `مرحباً بك يا *${data.name}* في *${data.groupName}* 🎉\n\n`;
-            welcomeMessage += `📞 رقم الهاتف: *${data.phone}*\n`;
+            welcomeMessage += `📞 رقم الهاتف: *+${data.phone}*\n`;
             welcomeMessage += `🆔 معرف القروب: *${data.groupId.replace(/@.*/, '')}*\n\n`;
             welcomeMessage += `*نتمنى لك وقتًا ممتعًا معنا!* 🌟`;
 

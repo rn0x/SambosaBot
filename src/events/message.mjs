@@ -17,16 +17,19 @@ import { convertImageToStickerCircle } from '../processors/stickers/convertImage
 import IslamicQuiz from '../processors/IslamicQuiz.mjs';
 import checkAnswer from '../processors/checkAnswer.mjs';
 
-export default function message(client, MessageMedia, Poll) {
-    client.on('message', async (message) => {
+export default function message(MessageMedia, Poll) {
+    client.on('message_create', async (message) => {
         try {
             const groupIDs = config.allowedGroups;
             const getChat = await message.getChat();
             const getContact = await message.getContact();
             // const participants = await client.getGroupMembershipRequests(message.from);
             const isAdmin = async () => {
-                const participants = await getChat.participants;
-                return participants.some(
+                if (!getChat.participants) {
+                    console.error('Participants not found!');
+                    return false;
+                }
+                return getChat.participants.some(
                     (participant) => {
                         return participant.isAdmin && participant.id.user === getContact.number
                     });

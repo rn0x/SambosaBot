@@ -6,7 +6,7 @@ import fs from 'fs-extra';
 import { generateImageFromHtml } from '../utils/generateImage.mjs';
 import { config } from '../../config.mjs'
 
-export default function groupJoin( MessageMedia) {
+export default function groupJoin(client, MessageMedia) {
     client.on('group_join', async (e) => {
         try {
             // جلب المعرف الخاص بالمشارك

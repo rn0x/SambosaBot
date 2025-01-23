@@ -17,7 +17,7 @@ import { convertImageToStickerCircle } from '../processors/stickers/convertImage
 import IslamicQuiz from '../processors/IslamicQuiz.mjs';
 import checkAnswer from '../processors/checkAnswer.mjs';
 
-export default function message(MessageMedia, Poll) {
+export default function message(client, MessageMedia, Poll) {
     client.on('message_create', async (message) => {
         try {
             const groupIDs = config.allowedGroups;

@@ -35,7 +35,7 @@ export default function groupJoin(client, MessageMedia) {
             // إذا لم تكن الصور متوفرة، استخدم الصور الافتراضية
             const userPicture = profilePictureUrl || `data:image/jpeg;base64,${defaultProfilePic}`;
             const groupPicture = groupPictureUrl || `data:image/jpeg;base64,${defaultGroupPic}`;
-            const fontCairoBase64 = `data:font/ttf;base64,,${fontCairo}`;
+            const fontCairoBase64 = `data:font/ttf;base64,${fontCairo}`;
 
             // قالب HTML للصورة
             const htmlTemplate = await fs.readFile(path.join(config.paths.root, 'src', 'template', 'groupJoinTemplate.html'), { encoding: 'utf-8' });

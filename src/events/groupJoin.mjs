@@ -15,8 +15,10 @@ export default function groupJoin(client, MessageMedia) {
             // جلب بيانات الشخص باستخدام المعرف
             const contact = await client.getContactById(participantId);
 
+            const getChat = await contact.getChat();
             // استخراج المعلومات مثل الاسم ورقم الهاتف
-            const name = contact?.pushname ? contact.pushname : contact?.verifiedName ? contact.verifiedName : contact?.shortName ? contact.shortName : contact?.name ? contact.name : ' ';
+            const name = contact?.pushname ? contact.pushname : contact?.verifiedName ? contact.verifiedName : contact?.shortName ? contact.shortName : contact?.name ? contact.name : getChat.name ? getChat.name : 'لايوجد أسم';
+           
             const phoneNumber = contact.number;
             const profilePictureUrl = await contact.getProfilePicUrl();
 
@@ -70,6 +72,7 @@ export default function groupJoin(client, MessageMedia) {
             // إرسال الرسالة مع الصورة
             const sentMessage = await client.sendMessage(groupId, imageMessage, {
                 caption: welcomeMessage, // استخدام المتغير كتعليق
+                mentions: [data.phone + "@c.us"]
             });
 
             setTimeout(async () => {

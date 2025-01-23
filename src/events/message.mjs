@@ -23,6 +23,14 @@ export default function message(client, MessageMedia, Poll) {
             const groupIDs = config.allowedGroups;
             const getChat = await message.getChat();
             const getContact = await message.getContact();
+            // const participants = await client.getGroupMembershipRequests(message.from);
+            const isAdmin = async () => {
+                const participants = await getChat.participants;
+                return participants.some(
+                    (participant) => {
+                        return participant.isAdmin && participant.id.user === getContact.number
+                    });
+            };
 
             // تجميع المعلومات في كائن واحد
             const messageMeta = {
@@ -34,7 +42,16 @@ export default function message(client, MessageMedia, Poll) {
                 deviceType: message.deviceType,
                 isGroup: message.from.includes('@g.us'),
                 chatName: getChat.name,
+                isAdmin: await isAdmin(),
             };
+
+            // التعامل مع الروابط
+            if (messageMeta.isGroup && /https?:\/\/\S+/i.test(message.body)) {
+                if (!messageMeta.isAdmin) {
+                    await message.delete(true).catch(() => { }); // حذف الرسالة
+                    return;
+                }
+            }
 
             // التعامل مع السبام
             await handleSpam(message, messageMeta);

@@ -6,7 +6,7 @@ import fs from 'fs-extra';
 import { generateImageFromHtml } from '../utils/generateImage.mjs';
 import { config } from '../../config.mjs'
 
-export default function groupJoin(client, MessageMedia) {
+export default function groupJoin( MessageMedia) {
     client.on('group_join', async (e) => {
         try {
             // جلب المعرف الخاص بالمشارك
@@ -16,7 +16,7 @@ export default function groupJoin(client, MessageMedia) {
             const contact = await client.getContactById(participantId);
 
             // استخراج المعلومات مثل الاسم ورقم الهاتف
-            const name = contact.pushname || contact.verifiedName || contact.shortName || 'غير معروف';
+            const name = contact.pushname || contact.verifiedName || contact.shortName || contact.name || ' ';
             const phoneNumber = contact.number;
             const profilePictureUrl = await contact.getProfilePicUrl();
 
@@ -74,7 +74,7 @@ export default function groupJoin(client, MessageMedia) {
 
             setTimeout(async () => {
                 await sentMessage.delete(true).catch(() => { });
-            }, 3 * 60 * 1000);
+            }, 2 * 60 * 1000);
 
         } catch (error) {
             console.error('Error in group_join event:', error);

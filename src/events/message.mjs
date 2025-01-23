@@ -2,6 +2,7 @@
 
 import path from 'path';
 import fs from 'fs-extra';
+import client from '../client.mjs'
 import { config } from '../../config.mjs';
 import { convertImageToStickerBg } from '../processors/stickers/convertImageToStickerBg.mjs';
 import { stealSticker } from '../processors/stickers/stealSticker.mjs';
@@ -16,7 +17,7 @@ import { convertImageToStickerCircle } from '../processors/stickers/convertImage
 import IslamicQuiz from '../processors/IslamicQuiz.mjs';
 import checkAnswer from '../processors/checkAnswer.mjs';
 
-export default function message(client, MessageMedia, Poll) {
+export default function message(MessageMedia, Poll) {
     client.on('message', async (message) => {
         try {
             const groupIDs = config.allowedGroups;
@@ -25,7 +26,7 @@ export default function message(client, MessageMedia, Poll) {
 
             // تجميع المعلومات في كائن واحد
             const messageMeta = {
-                pushname: getContact.pushname || message._data.notifyName,
+                pushname: getContact.pushname || getContact.verifiedName || message._data.notifyName,
                 userid: getContact.id._serialized,
                 number: getContact.number,
                 id: message.from,

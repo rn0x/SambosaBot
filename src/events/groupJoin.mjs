@@ -16,7 +16,7 @@ export default function groupJoin(client, MessageMedia) {
             const contact = await client.getContactById(participantId);
 
             // استخراج المعلومات مثل الاسم ورقم الهاتف
-            const name = contact.pushname || contact.verifiedName || 'غير معروف';
+            const name = contact.pushname || contact.verifiedName || contact.shortName || 'غير معروف';
             const phoneNumber = contact.number;
             const profilePictureUrl = await contact.getProfilePicUrl();
 

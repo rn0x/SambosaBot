@@ -23,7 +23,7 @@ export default function message(client, MessageMedia, Poll) {
             const groupIDs = config.allowedGroups;
             const getChat = await message.getChat();
             const getContact = await message.getContact();
-            // const participants = await client.getGroupMembershipRequests(message.from);
+            const participants = await client.getGroupMembershipRequests(message.from);
             const isAdmin = async () => {
                 if (!getChat.participants) {
                     console.error('Participants not found!');

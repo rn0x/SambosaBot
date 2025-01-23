@@ -22,7 +22,6 @@ export default function groupJoin(client, MessageMedia) {
 
             // جلب معلومات القروب
             const groupId = e.id.remote;
-            if (groupId !== '120363394798363466@g.us') return
             const chat = await client.getChatById(groupId);
             const groupName = chat.name;
             const group = await chat.getContact();

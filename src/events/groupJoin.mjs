@@ -74,7 +74,7 @@ export default function groupJoin(client, MessageMedia) {
 
             setTimeout(async () => {
                 await sentMessage.delete(true).catch(() => { });
-            }, 2 * 60 * 1000);
+            }, 3 * 60 * 1000);
 
         } catch (error) {
             console.error('Error in group_join event:', error);

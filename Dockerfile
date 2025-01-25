@@ -12,12 +12,35 @@ COPY config.mjs ./
 # تثبيت التبعيات
 RUN npm install
 
-# تثبيت المتطلبات الخاصة بـ rembg عبر pip
-RUN apk add --no-cache python3 py3-pip ffmpeg imagemagick
+# تثبيت المتطلبات الأساسية لنظام التشغيل والمكتبات
+RUN apk add --no-cache \
+    python3 \
+    py3-pip \
+    ffmpeg \
+    imagemagick \
+    build-base \
+    gcc \
+    g++ \
+    libffi-dev \
+    musl-dev \
+    libjpeg-turbo-dev \
+    zlib-dev \
+    pkgconfig \
+    python3-dev \
+    llvm \
+    llvm-dev \
+    clang
+
+# إعداد بيئة Python
 RUN python3 -m ensurepip --upgrade
 RUN python3 -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
-RUN pip install --upgrade pip
+
+# تثبيت numpy مسبقًا لتجنب مشاكل numba
+RUN pip install --upgrade pip setuptools wheel
+RUN pip install numpy
+
+# تثبيت الحزمة rembg
 RUN pip install "rembg[cli]"
 
 # نسخ باقي الملفات إلى الحاوية

@@ -8,7 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export default async function checkAnswer(message) {
-    const keywords = ["!الإجابة", "!الإجابه", "!اجابه", "!اجابة", "!أجابة", "!أجابه", "!answer"];
+    const keywords = ["!الإجابة", "!الإجابه", "!اجابه","!إجابه","!إجابة", "!اجابة", "!أجابة", "!أجابه", "!answer"];
     if (!hasMatchingKeywords(message.body, keywords)) return;
 
     try {

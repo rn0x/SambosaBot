@@ -11,17 +11,17 @@ export async function convertImageToStickerBg(message, MessageMedia, messageMeta
     try {
 
         const hasQuotedMsg = message.hasQuotedMsg;
-        if (!hasQuotedMsg) return
         const keywords = ["!خلفية", "!خلفيه", "!remove", '!rmbg'];
         const messageBody = message?.body || '';
         const messageCaption = message?._data?.caption || '';
         if (!hasMatchingKeywords(messageBody, keywords) && !hasMatchingKeywords(messageCaption, keywords)) return;
-        const getQuotedMessage = await message.getQuotedMessage();
 
-        if (!getQuotedMessage.hasMedia) return
-        if (getQuotedMessage?.type !== 'image') return await message.reply('يمكن إزالة خلفية الصور فقط! ⚠️');
+        // تحديد الرسالة المستهدفة (إذا كانت هناك رسالة مقتبسة أو الرسالة نفسها)
+        const targetMessage = hasQuotedMsg ? await message.getQuotedMessage() : message;
+        if (!targetMessage.hasMedia) return;
+        if (targetMessage?.type !== 'image') return await message.reply('يمكن إزالة خلفية الصور فقط! ⚠️');
 
-        const media = await getQuotedMessage.downloadMedia();
+        const media = await targetMessage.downloadMedia();
         if (media.mimetype !== 'image/jpeg') return
 
         const uniqueId = Date.now(); // لتجنب تداخل الملفات

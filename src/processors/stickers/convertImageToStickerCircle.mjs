@@ -10,18 +10,16 @@ import logger from '../../utils/logger.mjs'
 
 export async function convertImageToStickerCircle(message, MessageMedia, messageMeta) {
     try {
-        const hasQuotedMsg = message.hasQuotedMsg;
-        if (!hasQuotedMsg) return;
-
+        const hasQuotedMsg = message?.hasQuotedMsg;
         const keywords = ["!دائرة", "!دائره", "!circle"];
         const messageBody = message?.body || '';
         const messageCaption = message?._data?.caption || '';
         if (!hasMatchingKeywords(messageBody, keywords) && !hasMatchingKeywords(messageCaption, keywords)) return;
 
-        const getQuotedMessage = await message.getQuotedMessage();
+        const targetMessage = hasQuotedMsg ? await message.getQuotedMessage() : message;
 
-        if (!getQuotedMessage.hasMedia) return;
-        const mediaType = getQuotedMessage?.type;
+        if (!targetMessage.hasMedia) return;  // التأكد من وجود ميديا في الرسالة
+        const mediaType = targetMessage?.type;
 
         let inputPath, outputPath;
         const uniqueId = Date.now(); // لتجنب تداخل الملفات
@@ -30,14 +28,14 @@ export async function convertImageToStickerCircle(message, MessageMedia, message
         outputPath = path.resolve(tempDir, `output-circle-${uniqueId}.png`); // مسار الصورة الناتجة
 
         await fs.ensureDir(tempDir);
-        
+
         if (mediaType === 'image') {
             // إذا كانت الميديا صورة، حفظ الصورة مباشرة
-            const media = await getQuotedMessage.downloadMedia();
+            const media = await targetMessage.downloadMedia();
             await fs.outputFile(inputPath + '.png', media.data, 'base64');
         } else if (mediaType === 'video') {
             // إذا كانت الميديا فيديو، استخراج أول إطار أو عدة إطارات
-            const media = await getQuotedMessage.downloadMedia();
+            const media = await targetMessage.downloadMedia();
             if (media.mimetype !== 'video/mp4') return;
 
             const tempVideoPath = path.resolve(tempDir, `video-${uniqueId}.mp4`);

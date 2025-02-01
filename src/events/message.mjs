@@ -9,8 +9,7 @@ import { convertImageToStickerBg } from '../processors/stickers/convertImageToSt
 import { stealSticker } from '../processors/stickers/stealSticker.mjs';
 import { convertVideoToStickerAuto } from '../processors/stickers/convertVideoToStickerAuto.mjs';
 import { convertImageToStickerAuto } from '../processors/stickers/convertImageToStickerAuto.mjs';
-import { convertImageToSticker } from '../processors/stickers/convertImageToSticker.mjs';
-import { convertVideoToSticker } from '../processors/stickers/convertVideoToSticker.mjs';
+import { convertMediaToSticker } from '../processors/stickers/convertMediaToSticker.mjs';
 import { convertStickerToMedia } from '../processors/stickers/convertStickerToMedia.mjs';
 import { sendMenu } from '../processors/messages/sendMenu.mjs';
 import { handleSpam } from '../processors/spamHandler.mjs';
@@ -52,10 +51,9 @@ export default function message(client, MessageMedia, Poll) {
             }
 
             // جميع المعالجات أو الأوامر
-            await convertImageToSticker(message, MessageMedia, messageMeta);
+            await convertMediaToSticker(message, MessageMedia, messageMeta);
             await convertImageToStickerCircle(message, MessageMedia, messageMeta);
             await convertImageToStickerBg(message, MessageMedia, messageMeta);
-            await convertVideoToSticker(message, MessageMedia, messageMeta);
             await stealSticker(message, MessageMedia, messageMeta);
             await convertStickerToMedia(message, MessageMedia);
             await sendMenu(message, messageMeta);

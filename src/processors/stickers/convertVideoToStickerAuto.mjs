@@ -16,7 +16,8 @@ export async function convertVideoToStickerAuto(message, MessageMedia, messageMe
 
         const uniqueId = Date.now(); // لتجنب تداخل الملفات
         const tempDir = config.paths.temp; // مسار مجلد الصور
-        const inputPath = path.resolve(tempDir, `input-${uniqueId}.mp4`);
+        const isGif = media.mimetype === 'image/gif';
+        const inputPath = path.resolve(tempDir, `input-${uniqueId}.${isGif ? 'gif' : 'mp4'}`);
         const outputPath = path.resolve(tempDir, `output-${uniqueId}.webp`);
 
         const dataBase64 = Buffer.from(media.data, 'base64');

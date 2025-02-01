@@ -14,7 +14,9 @@ export async function convertImageToStickerCircle(message, MessageMedia, message
         if (!hasQuotedMsg) return;
 
         const keywords = ["!دائرة", "!دائره", "!circle"];
-        if (!hasMatchingKeywords(message.body, keywords)) return;
+        const messageBody = message?.body || '';
+        const messageCaption = message?._data?.caption || '';
+        if (!hasMatchingKeywords(messageBody, keywords) && !hasMatchingKeywords(messageCaption, keywords)) return;
 
         const getQuotedMessage = await message.getQuotedMessage();
 

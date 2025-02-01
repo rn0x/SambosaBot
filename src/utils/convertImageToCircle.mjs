@@ -44,5 +44,7 @@ export default async function convertImageToCircle(inputPath, outputPath) {
         // التعامل مع الأخطاء بشكل صحيح
         console.error('حدث خطأ أثناء تحويل الصورة:', err.message);
         throw err; // إعادة الخطأ لتمكين المعالجة في المستوى الأعلى إذا لزم الأمر
+    } finally {
+        await fs.remove(inputPath);
     }
 }

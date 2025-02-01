@@ -1,9 +1,9 @@
 import fs from 'fs-extra';
 import path from 'path';
-import { config } from '../../../config.mjs'
-import convertVideoToWebp from '../../utils/convertVideoToWebp.mjs'
-import hasMatchingKeywords from '../../utils/hasMatchingKeywords.mjs';
-import logger from '../../utils/logger.mjs'
+import { config } from '../../../../config.mjs'
+import convertVideoToWebp from '../../../utils/convertVideoToWebp.mjs'
+import hasMatchingKeywords from '../../../utils/hasMatchingKeywords.mjs';
+import logger from '../../../utils/logger.mjs'
 
 export async function convertVideoToSticker(message, MessageMedia, messageMeta) {
     try {

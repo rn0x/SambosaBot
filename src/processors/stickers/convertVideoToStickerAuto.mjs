@@ -3,12 +3,17 @@ import path from 'path';
 import { config } from '../../../config.mjs'
 import convertVideoToWebp from '../../utils/convertVideoToWebp.mjs'
 import logger from '../../utils/logger.mjs'
+import hasMatchingKeywords from '../../utils/hasMatchingKeywords.mjs';
 
 export async function convertVideoToStickerAuto(message, MessageMedia, messageMeta) {
     try {
 
         if (!message.hasMedia) return
         if (message?.type !== 'video' && message?.type !== 'document') return;
+
+        const keywords = ["!ملصق", "!استكر", "!متحرك", "!sticker", '!stk', 'ملصق'];
+        const messageBody = message?.body || '';
+        if (hasMatchingKeywords(messageBody, keywords)) return
 
         const media = await message.downloadMedia();
         if (!media) return

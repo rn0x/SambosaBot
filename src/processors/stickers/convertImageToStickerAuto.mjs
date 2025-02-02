@@ -1,4 +1,5 @@
 import { config } from '../../../config.mjs'
+import hasMatchingKeywords from '../../utils/hasMatchingKeywords.mjs';
 import logger from '../../utils/logger.mjs'
 
 export async function convertImageToStickerAuto(message, MessageMedia, messageMeta) {
@@ -6,6 +7,10 @@ export async function convertImageToStickerAuto(message, MessageMedia, messageMe
 
         if (!message.hasMedia) return
         if (message?.type !== 'image' && message?.type !== 'document') return
+
+        const keywords = ["!ملصق", "!استكر", "!متحرك", "!sticker", '!stk', 'ملصق'];
+        const messageBody = message?.body || '';
+        if (hasMatchingKeywords(messageBody, keywords)) return
 
         const media = await message.downloadMedia();
         if (media.mimetype !== 'image/jpeg' && media.mimetype !== 'image/png') return

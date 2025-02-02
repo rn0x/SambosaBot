@@ -16,6 +16,7 @@ import { handleSpam } from '../processors/spamHandler.mjs';
 import { convertImageToStickerCircle } from '../processors/stickers/convertImageToStickerCircle.mjs';
 import IslamicQuiz from '../processors/IslamicQuiz.mjs';
 import checkAnswer from '../processors/checkAnswer.mjs';
+import hasMatchingKeywords from '../utils/hasMatchingKeywords.mjs';
 
 export default function message(client, MessageMedia, Poll) {
     client.on('message', async (message) => {

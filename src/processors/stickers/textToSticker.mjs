@@ -6,31 +6,31 @@ import { config } from '../../../config.mjs';
 
 // أنماط متقدمة مع ألوان مميزة
 const styles = {
-    1: { 
+    1: {
         font: "'Noto Naskh Arabic', sans-serif",
         color: "#000",
         shadow: "4px 4px 12px rgba(0,0,0,0.9)",
         fontSize: "52px"
     },
-    2: { 
+    2: {
         font: "'Lalezar', cursive",
         color: "#FFD700",
         shadow: "3px 3px 8px rgba(0,0,0,0.7), -1px -1px 2px rgba(255,255,255,0.2)",
         fontSize: "56px"
     },
-    3: { 
+    3: {
         font: "'Reem Kufi', sans-serif",
         color: "#2f34d1",
         shadow: "0 0 15px rgba(0,0,0,0.8)",
         fontSize: "59px"
     },
-    4: { 
+    4: {
         font: "'El Messiri', sans-serif",
         color: "#FF7F50",
         shadow: "2px 2px 6px rgba(0,0,0,0.6), 0 0 4px rgba(255,255,255,0.3)",
         fontSize: "54px"
     },
-    5: { 
+    5: {
         font: "'Amiri', serif",
         color: "#a91818",
         shadow: "3px 3px 10px rgba(0,0,0,0.9)",
@@ -42,7 +42,7 @@ const styles = {
         shadow: "2px 2px 8px rgba(0,0,0,0.7)",
         fontSize: "50px"
     },
-    7: { 
+    7: {
         font: "'Jomhuria', cursive",
         color: "#FF4500",
         shadow: "0 0 12px rgba(255,69,0,0.5), 2px 2px 4px rgba(0,0,0,0.6)",
@@ -60,7 +60,7 @@ const styles = {
         shadow: "0 0 10px rgba(0,0,0,0.8), 1px 1px 2px rgba(255,255,255,0.5)",
         fontSize: "58px"
     },
-    10: { 
+    10: {
         font: "'Scheherazade New', serif",
         color: "#18a038",
         shadow: "2px 2px 8px rgba(0,0,0,0.7)",
@@ -85,6 +85,7 @@ const dynamicTemplate = `
             justify-content: center;
             align-items: center;
             background-color: #00000000;
+            background: transparent !important;
             overflow: hidden;
         }
         
@@ -127,7 +128,7 @@ export default async function textToSticker(message, MessageMedia, messageMeta) 
 
         await message.reply(`⚡ طلبتَ النمط ${styleNumber}.. الملصق قادم خلال ثوانٍ 🚀`);
 
-        const { font, color, shadow, background, fontSize } = styles[styleNumber];
+        const { font, color, shadow, fontSize } = styles[styleNumber];
 
         const base64Image = await generateImageFromHtml({
             htmlTemplate: dynamicTemplate,
@@ -135,7 +136,6 @@ export default async function textToSticker(message, MessageMedia, messageMeta) 
                 font,
                 color,
                 shadow,
-                background,
                 fontSize,
                 text: text.replace(/\n/g, '<br>')
             },

@@ -131,6 +131,7 @@ export async function generateImageFromHtml({ htmlTemplate, data = {}, retryCoun
                 type: 'png',
                 encoding: 'base64',
                 fullPage: true,
+                omitBackground: true
             };
 
             const base64Data = await page.screenshot(screenshotOptions);

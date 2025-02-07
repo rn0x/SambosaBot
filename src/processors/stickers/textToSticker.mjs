@@ -77,6 +77,11 @@ const dynamicTemplate = `
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@700&family=Lalezar&family=Reem+Kufi&family=El+Messiri:wght@600&family=Amiri:ital@1&family=Changa:wght@500&family=Jomhuria&family=Mirza&family=Aref+Ruqaa&family=Scheherazade+New&display=swap');
         
+        html {
+            background-color: #00000000;
+            background: transparent !important;
+        }
+
         body {
             width: 512px;
             height: 512px;

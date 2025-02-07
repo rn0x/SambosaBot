@@ -11,7 +11,7 @@ export async function convertVideoToStickerAuto(message, MessageMedia, messageMe
         if (!message.hasMedia) return
         if (message?.type !== 'video' && message?.type !== 'document') return;
 
-        const keywords = ["!ملصق", "!استكر", "!متحرك", "!sticker", '!stk', 'ملصق'];
+        const keywords = ["!ملصق", "!استكر", "!متحرك", "!sticker", '!stk', 'ملصق', "!خلفية", "!خلفيه", "!remove", '!rmbg', "!دائرة", "!دائره", "!circle"];
         const messageBody = message?.body || '';
         if (hasMatchingKeywords(messageBody, keywords)) return
 

@@ -17,6 +17,7 @@ import { convertImageToStickerCircle } from '../processors/stickers/convertImage
 import IslamicQuiz from '../processors/IslamicQuiz.mjs';
 import checkAnswer from '../processors/checkAnswer.mjs';
 import hasMatchingKeywords from '../utils/hasMatchingKeywords.mjs';
+import textToSticker from '../processors/stickers/textToSticker.mjs';
 
 export default function message(client, MessageMedia, Poll) {
     client.on('message', async (message) => {
@@ -57,9 +58,13 @@ export default function message(client, MessageMedia, Poll) {
             await convertImageToStickerBg(message, MessageMedia, messageMeta);
             await stealSticker(message, MessageMedia, messageMeta);
             await convertStickerToMedia(message, MessageMedia);
+            await textToSticker(message, MessageMedia, messageMeta);
             await sendMenu(message, messageMeta);
-            await IslamicQuiz(message, Poll);
-            await checkAnswer(message);
+
+            if (!groupIDs.includes(messageMeta.id)) {
+                await IslamicQuiz(message, Poll);
+                await checkAnswer(message);
+            }
 
             // await message.reply(new Poll('Winter or Summer?', ['Winter', 'Summer']));
 

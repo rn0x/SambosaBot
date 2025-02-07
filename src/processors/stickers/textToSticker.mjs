@@ -10,70 +10,60 @@ const styles = {
         font: "'Noto Naskh Arabic', sans-serif",
         color: "#000",
         shadow: "4px 4px 12px rgba(0,0,0,0.9)",
-        background: "transparent",
         fontSize: "52px"
     },
     2: { 
         font: "'Lalezar', cursive",
         color: "#FFD700",
         shadow: "3px 3px 8px rgba(0,0,0,0.7), -1px -1px 2px rgba(255,255,255,0.2)",
-        background: "transparent",
         fontSize: "56px"
     },
     3: { 
         font: "'Reem Kufi', sans-serif",
         color: "#2f34d1",
         shadow: "0 0 15px rgba(0,0,0,0.8)",
-        background: "transparent",
         fontSize: "59px"
     },
     4: { 
         font: "'El Messiri', sans-serif",
         color: "#FF7F50",
         shadow: "2px 2px 6px rgba(0,0,0,0.6), 0 0 4px rgba(255,255,255,0.3)",
-        background: "transparent",
         fontSize: "54px"
     },
     5: { 
         font: "'Amiri', serif",
         color: "#a91818",
         shadow: "3px 3px 10px rgba(0,0,0,0.9)",
-        background: "transparent",
         fontSize: "57px"
     },
     6: {
         font: "'Changa', sans-serif",
         color: "#98FB98",
         shadow: "2px 2px 8px rgba(0,0,0,0.7)",
-        background: "transparent",
         fontSize: "50px"
     },
     7: { 
         font: "'Jomhuria', cursive",
         color: "#FF4500",
         shadow: "0 0 12px rgba(255,69,0,0.5), 2px 2px 4px rgba(0,0,0,0.6)",
-        background: "transparent",
         fontSize: "58px"
     },
     8: {
         font: "'Mirza', serif",
         color: "#9370DB",
         shadow: "3px 3px 10px rgba(0,0,0,0.8)",
-        background: "transparent",
         fontSize: "52px"
     },
     9: {
         font: "'Aref Ruqaa', serif",
         color: "#183fa9",
         shadow: "0 0 10px rgba(0,0,0,0.8), 1px 1px 2px rgba(255,255,255,0.5)",
-        background: "transparent",
         fontSize: "58px"
     },
     10: { 
         font: "'Scheherazade New', serif",
         color: "#18a038",
         shadow: "2px 2px 8px rgba(0,0,0,0.7)",
-        background: "transparent",
         fontSize: "58px"
     }
 };
@@ -94,7 +84,7 @@ const dynamicTemplate = `
             display: flex;
             justify-content: center;
             align-items: center;
-            background: {{background}};
+            background-color: #00000000;
             overflow: hidden;
         }
         

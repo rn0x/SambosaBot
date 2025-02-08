@@ -95,7 +95,7 @@ const dynamicTemplate = `
         }
         
         .text-container {
-            font-family: {{font}};
+            font-family: {{font}}, 'Noto Color Emoji', sans-serif;
             color: {{color}};
             font-size: {{fontSize}};
             text-align: center;

@@ -8,7 +8,7 @@ export async function convertImageToStickerAuto(message, MessageMedia, messageMe
         if (!message.hasMedia) return
         if (message?.type !== 'image' && message?.type !== 'document') return
 
-        const keywords = ["!ملصق", "!استكر", "!متحرك", "!sticker", '!stk', 'ملصق', "!خلفية", "!خلفيه", "!remove", '!rmbg', "!دائرة", "!دائره", "!circle"];
+        const keywords = ["!ملصق", "!استكر", "!متحرك", "!sticker", '!stk', 'ملصق', "!خلفية", "!خلفيه", "!remove", '!rmbg', "!دائرة", "!دائره", "!circle", "!صورة"];
         const messageBody = message?.body || '';
         if (hasMatchingKeywords(messageBody, keywords)) return
 

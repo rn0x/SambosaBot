@@ -19,6 +19,7 @@ import checkAnswer from '../processors/checkAnswer.mjs';
 import hasMatchingKeywords from '../utils/hasMatchingKeywords.mjs';
 import textToSticker from '../processors/stickers/textToSticker.mjs';
 import imageToSticker from '../processors/stickers/imageToSticker.mjs';
+import videoToSticker from '../processors/stickers/videoToSticker.mjs';
 
 export default function message(client, MessageMedia, Poll) {
     client.on('message', async (message) => {
@@ -61,6 +62,7 @@ export default function message(client, MessageMedia, Poll) {
             await convertStickerToMedia(message, MessageMedia);
             await textToSticker(message, MessageMedia, messageMeta);
             await imageToSticker(message, MessageMedia, messageMeta);
+            await videoToSticker(message, MessageMedia, messageMeta);
             await sendMenu(message, messageMeta);
 
             if (!groupIDs.includes(messageMeta.id)) {

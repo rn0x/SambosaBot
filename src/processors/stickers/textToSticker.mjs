@@ -142,7 +142,7 @@ export default async function textToSticker(message, MessageMedia, messageMeta) 
                 color,
                 shadow,
                 fontSize,
-                text: encodeURIComponent(text.replace(/\n/g, '<br>'))
+                text: text.replace(/\n/g, '<br>')
             },
             viewport: {
                 width: 512,

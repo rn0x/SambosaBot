@@ -106,8 +106,6 @@ const dynamicTemplate = `
             line-height: 1.25;
             padding: 10px 15px;
             word-wrap: break-word;
-            filter: drop-shadow(0 0 4px rgba(0,0,0,0.3));
-            background: linear-gradient(to top, rgba(0,0,0,0.35), transparent 80%);
             border-radius: 8px;
             max-height: 65%;
             overflow: hidden;

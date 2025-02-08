@@ -67,7 +67,6 @@ const styles = {
     }
 };
 
-// قالب HTML معدّل لدعم الصور الخلفية
 const dynamicTemplate = `
 <!DOCTYPE html>
 <html>
@@ -87,25 +86,31 @@ const dynamicTemplate = `
         body {
             width: 512px;
             height: 512px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            position: relative;
             background-image: url('data:{{imageMimeType}};base64,{{imageBase64}}');
             background-size: cover;
             background-position: center;
         }
         
         .text-container {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
             font-family: {{font}}, 'Noto Color Emoji', sans-serif;
             color: {{color}};
-            font-size: {{fontSize}};
+            font-size: {{effectiveFontSize}};
             text-align: center;
             text-shadow: {{shadow}};
-            max-width: 85%;
-            line-height: 1.4;
-            padding: 20px;
+            line-height: 1.25;
+            padding: 10px 15px;
             word-wrap: break-word;
-            filter: drop-shadow(0 0 3px rgba(0,0,0,0.2));
+            filter: drop-shadow(0 0 4px rgba(0,0,0,0.3));
+            background: linear-gradient(to top, rgba(0,0,0,0.35), transparent 80%);
+            border-radius: 8px;
+            max-height: 65%;
+            overflow: hidden;
         }
     </style>
 </head>
@@ -120,7 +125,7 @@ export default async function imageToSticker(message, MessageMedia, messageMeta)
         // التحقق من وجود ميديا أو رد على ميديا
         let media;
         let commandText = '';
-        
+
         if (message.hasMedia) {
             media = await message.downloadMedia();
             commandText = message.body || message._data?.caption || '';
@@ -131,7 +136,7 @@ export default async function imageToSticker(message, MessageMedia, messageMeta)
                 commandText = message.body;
             }
         }
-        
+
         if (!media || !media.mimetype.startsWith('image/')) return;
 
         // معالجة الأمر
@@ -151,21 +156,28 @@ export default async function imageToSticker(message, MessageMedia, messageMeta)
         await message.reply(`⚡ جاري إنشاء الملصق بالنمط ${styleNumber}...`);
 
         // تحضير البيانات
-        const { font, color, shadow, fontSize } = styles[styleNumber];
-        const imageBase64 = media.data;
-        const imageMimeType = media.mimetype;
+        const originalStyle = styles[styleNumber];
+        let effectiveFontSize = parseInt(originalStyle.fontSize);
+        
+        // حساب حجم الخط بناءً على طول النص
+        const textLength = text.trim().length;
+        if (textLength > 40) effectiveFontSize -= 8;
+        if (textLength > 60) effectiveFontSize -= 7;
+        if (textLength > 80) effectiveFontSize -= 5;
+        
+        // الحد الأدنى لحجم الخط
+        effectiveFontSize = Math.max(effectiveFontSize, 40);
 
-        // توليد الصورة
         const base64Image = await generateImageFromHtml({
             htmlTemplate: dynamicTemplate,
             data: {
-                font,
-                color,
-                shadow,
-                fontSize,
+                font: originalStyle.font,
+                color: originalStyle.color,
+                shadow: originalStyle.shadow,
+                effectiveFontSize: `${effectiveFontSize}px`,
                 text: text.replace(/\n/g, '<br>'),
-                imageBase64,
-                imageMimeType
+                imageBase64: media.data,
+                imageMimeType: media.mimetype
             },
             viewport: {
                 width: 512,
@@ -179,7 +191,7 @@ export default async function imageToSticker(message, MessageMedia, messageMeta)
         const mediaResult = new MessageMedia('image/png', base64Image, 'sticker.png');
         await message.reply(mediaResult, null, {
             sendMediaAsSticker: true,
-            stickerAuthor: messageMeta.pushname,
+            stickerAuthor: messageMeta.pushname || messageMeta.number,
             stickerName: config.stickerName,
             stickerCategories: ['🎨', '✨', '❤️']
         });

@@ -105,8 +105,8 @@ const dynamicTemplate = `
             padding: 20px;
             word-wrap: break-word;
             filter: drop-shadow(0 0 3px rgba(0,0,0,0.2));
-            text-rendering: geometricPrecision;
-            -webkit-font-smoothing: subpixel-antialiased;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
         }
     </style>
 </head>

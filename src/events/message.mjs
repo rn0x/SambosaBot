@@ -48,10 +48,12 @@ export default function message(client, MessageMedia, Poll) {
 
             // نلقائي يعمل في قروبات معينة فقط
             // اذا اردت ان يعمل في جميع القروبات قم بحذف الشرط  && groupIDs.includes(messageMeta.id)
-            // if (messageMeta.isGroup && groupIDs.includes(messageMeta.id)) {
-            //     await convertImageToStickerAuto(message, MessageMedia, messageMeta);
-            //     await convertVideoToStickerAuto(message, MessageMedia, messageMeta);
-            // }
+            if (messageMeta.isGroup && groupIDs.includes(messageMeta.id)) {
+                if (config.toStickerAuto) {
+                    await convertImageToStickerAuto(message, MessageMedia, messageMeta);
+                    await convertVideoToStickerAuto(message, MessageMedia, messageMeta);
+                }
+            }
 
             // جميع المعالجات أو الأوامر
             await convertMediaToSticker(message, MessageMedia, messageMeta);

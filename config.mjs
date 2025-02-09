@@ -12,6 +12,9 @@ export const config = {
   /* Config bot */
   PuppeteerPath: process.env.PUPPETEER_EXECUTABLE_PATH,
   stickerName: process.env.DEFAULT_AUTHOR,
+  groupJoin: process.env.GROUP_JOIN === 'true',
+  groupLeave: process.env.GROUP_LEAVE === 'true',
+  toStickerAuto: process.env.STICKER_AUTO === 'true',
 
   /* Paths */
   paths: {
@@ -21,6 +24,7 @@ export const config = {
     temp: path.join(root, "temp"),
   },
 
+  /* القروبات الي يعمل فيها التحويل التلقائي للملصقات */
   allowedGroups: [
     "120363388964573265@g.us",
     "966500552603-1573502799@g.us",

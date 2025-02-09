@@ -5,8 +5,8 @@ import path from 'path';
 import { config } from '../../../config.mjs';
 import hasMatchingKeywords from '../../utils/hasMatchingKeywords.mjs';
 import convertImageToCircle from '../../utils/convertImageToCircle.mjs';
-import { exec } from 'child_process';
-import logger from '../../utils/logger.mjs'
+import convertVideoToCircleWebp from '../../utils/convertVideoToCircleWebp.mjs'; // الوظيفة الجديدة
+import logger from '../../utils/logger.mjs';
 
 export async function convertImageToStickerCircle(message, MessageMedia, messageMeta) {
     try {
@@ -14,68 +14,68 @@ export async function convertImageToStickerCircle(message, MessageMedia, message
         const keywords = ["!دائرة", "!دائره", "!circle"];
         const messageBody = message?.body || '';
         const messageCaption = message?._data?.caption || '';
+        
         if (!hasMatchingKeywords(messageBody, keywords) && !hasMatchingKeywords(messageCaption, keywords)) return;
 
         const targetMessage = hasQuotedMsg ? await message.getQuotedMessage() : message;
+        if (!targetMessage.hasMedia) return;
 
-        if (!targetMessage.hasMedia) return;  // التأكد من وجود ميديا في الرسالة
-        const mediaType = targetMessage?.type;
-
-        let inputPath, outputPath;
-        const uniqueId = Date.now(); // لتجنب تداخل الملفات
-        const tempDir = config.paths.temp; // مسار مجلد الصور
-        inputPath = path.resolve(tempDir, `input-${uniqueId}`); // مسار الصورة المدخلة
-        outputPath = path.resolve(tempDir, `output-circle-${uniqueId}.png`); // مسار الصورة الناتجة
-
+        const mediaType = targetMessage.type;
+        const uniqueId = Date.now();
+        const tempDir = config.paths.temp;
         await fs.ensureDir(tempDir);
 
+        // معالجة الصور الثابتة
         if (mediaType === 'image') {
-            // إذا كانت الميديا صورة، حفظ الصورة مباشرة
-            const media = await targetMessage.downloadMedia();
-            await fs.outputFile(inputPath + '.png', media.data, 'base64');
-        } else if (mediaType === 'video') {
-            // إذا كانت الميديا فيديو، استخراج أول إطار أو عدة إطارات
-            const media = await targetMessage.downloadMedia();
-            if (media.mimetype !== 'video/mp4') return;
+            const inputPath = path.join(tempDir, `input-${uniqueId}.png`);
+            const outputPath = path.join(tempDir, `output-circle-${uniqueId}.png`);
 
-            const tempVideoPath = path.resolve(tempDir, `video-${uniqueId}.mp4`);
-            await fs.outputFile(tempVideoPath, media.data, 'base64');
-
-            // استخراج أول إطار من الفيديو (أو 5 إطارات)
-            await new Promise((resolve, reject) => {
-                const command = `ffmpeg -i ${tempVideoPath} -vf "fps=1" -vframes 1 ${inputPath}.png`;
-                exec(command, (error, stdout, stderr) => {
-                    if (error) {
-                        logger.error(`Error extracting frame from video: ${stderr}`);
-                        reject(new Error('فشل في استخراج الإطار من الفيديو'));
-                    } else {
-                        resolve();
-                    }
-                });
+            const media = await targetMessage.downloadMedia();
+            await fs.outputFile(inputPath, media.data, 'base64');
+            
+            await convertImageToCircle(inputPath, outputPath);
+            
+            const imageBuffer = await fs.readFile(outputPath);
+            const processedMedia = new MessageMedia('image/png', imageBuffer.toString('base64'));
+            
+            await message.reply(processedMedia, null, { 
+                sendMediaAsSticker: true,
+                stickerAuthor: messageMeta.pushname || messageMeta.number,
+                stickerName: config.stickerName
             });
 
-            await fs.remove(tempVideoPath); // حذف الفيديو المؤقت
+            await fs.remove(inputPath);
+            await fs.remove(outputPath);
+
+        // معالجة الفيديوهات والGIFs
+        } else if (mediaType === 'video' || mediaType === 'gif') {
+            const tempMediaPath = path.join(tempDir, `media-${uniqueId}.${mediaType === 'video' ? 'mp4' : 'gif'}`);
+            const media = await targetMessage.downloadMedia();
+            
+            await fs.outputFile(tempMediaPath, media.data, 'base64');
+            
+            // تحويل إلى WebP دائري متحرك
+            const outputWebPPath = await convertVideoToCircleWebp(tempMediaPath);
+            const webpBuffer = await fs.readFile(outputWebPPath);
+            
+            const processedMedia = new MessageMedia(
+                'image/webp', 
+                webpBuffer.toString('base64'),
+                'sticker.webp'
+            );
+
+            await message.reply(processedMedia, null, {
+                sendMediaAsSticker: true,
+                stickerAuthor: messageMeta.pushname || messageMeta.number,
+                stickerName: config.stickerName
+            });
+
+            await fs.remove(tempMediaPath);
+            await fs.remove(outputWebPPath);
         }
 
-        // تحويل الصورة (أو الإطار من الفيديو) إلى دائرة باستخدام الوظيفة
-        await convertImageToCircle(inputPath + '.png', outputPath);
-
-        // قراءة الصورة الناتجة
-        const imageBuffer = await fs.readFile(outputPath);
-        const base64Image = imageBuffer.toString('base64');
-        const processedMedia = new MessageMedia('image/png', base64Image, 'processed-circle-sticker.png');
-
-        // إرسال الصورة المعدلة كملصق
-        await message.reply(processedMedia, undefined, { sendMediaAsSticker: true, stickerAuthor: messageMeta.pushname || messageMeta.number, stickerName: config.stickerName });
-
-        // إرجاع رد للمستخدم
-        // await message.reply("*تم تحويل الصورة إلى ملصق دائري بنجاح!* 🎁");
-
-        // حذف الملفات المؤقتة
-        await fs.remove(inputPath + '.png');
-        await fs.remove(outputPath);
     } catch (error) {
-        logger.error('Error converting image to circular sticker:', error);
-        throw error;
+        logger.error('فشل التحويل:', error);
+        await message.reply("❌ حدث خطأ أثناء تحويل الميديا إلى ملصق دائري");
     }
 }

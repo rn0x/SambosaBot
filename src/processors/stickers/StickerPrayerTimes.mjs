@@ -1,3 +1,4 @@
+import hasMatchingKeywords from '../../utils/hasMatchingKeywords.mjs';
 import { createPrayerTimeSticker } from '../../utils/prayerTimes.mjs';
 import logger from '../../utils/logger.mjs';
 
@@ -20,7 +21,7 @@ export default async function StickerPrayerTimes(message, MessageMedia, messageM
         }
 
     } catch (error) {
+        console.log(error);
         logger.error('فشل في إنشاء ملصق الصلاة:', error);
-        await message.reply("❌ حدث خطأ أثناء جلب مواقيت الصلاة");
     }
 }

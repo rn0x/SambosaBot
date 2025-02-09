@@ -20,6 +20,7 @@ import hasMatchingKeywords from '../utils/hasMatchingKeywords.mjs';
 import textToSticker from '../processors/stickers/textToSticker.mjs';
 import imageToSticker from '../processors/stickers/imageToSticker.mjs';
 import { generatePhoneNumberSticker } from '../processors/stickers/generatePhoneNumberSticker.mjs';
+import StickerPrayerTimes from '../processors/stickers/StickerPrayerTimes.mjs';
 
 export default function message(client, MessageMedia, Poll) {
     client.on('message', async (message) => {
@@ -64,7 +65,8 @@ export default function message(client, MessageMedia, Poll) {
             await convertStickerToMedia(message, MessageMedia);
             await textToSticker(message, MessageMedia, messageMeta);
             await imageToSticker(message, MessageMedia, messageMeta);
-            await generatePhoneNumberSticker(message, MessageMedia, messageMeta)
+            await generatePhoneNumberSticker(message, MessageMedia, messageMeta);
+            await StickerPrayerTimes(message, MessageMedia, messageMeta)
             await sendMenu(message, messageMeta);
 
             if (!groupIDs.includes(messageMeta.id)) {

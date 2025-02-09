@@ -12,9 +12,12 @@ export async function convertImageToStickerBg(message, MessageMedia, messageMeta
 
         const hasQuotedMsg = message.hasQuotedMsg;
         const keywords = ["!خلفية", "!خلفيه", "!remove", '!rmbg'];
-        const messageBody = message?.body || '';
-        const messageCaption = message?._data?.caption || '';
-        if (!hasMatchingKeywords(messageBody, keywords) && !hasMatchingKeywords(messageCaption, keywords)) return;
+        const messageText = message?.body || message?._data?.caption || '';
+        if (!hasMatchingKeywords(messageText, keywords)) return;
+
+        // استخراج النص بعد الأمر (إن وُجد)
+        const extractedText = messageText.replace(/^[^\s]+\s*/, '').trim(); 
+        const stickerAuthor = extractedText || messageMeta.pushname || messageMeta.number;
 
         // تحديد الرسالة المستهدفة (إذا كانت هناك رسالة مقتبسة أو الرسالة نفسها)
         const targetMessage = hasQuotedMsg ? await message.getQuotedMessage() : message;
@@ -40,7 +43,7 @@ export async function convertImageToStickerBg(message, MessageMedia, messageMeta
             const processedMedia = new MessageMedia('image/png', base64Image, 'processed-image.png');
             // إرسال الصورة المعدلة
             // await client.sendMessage(message.from, processedMedia, { sendMediaAsSticker: true, stickerAuthor: config.defaultAuthor, stickerName: messageMeta.pushname || messageMeta.number });
-            await message.reply(processedMedia, undefined, { sendMediaAsSticker: true, stickerAuthor: messageMeta.pushname || messageMeta.number, stickerName: config.stickerName });
+            await message.reply(processedMedia, undefined, { sendMediaAsSticker: true, stickerAuthor: stickerAuthor, stickerName: config.stickerName });
             // await message.reply("*تم تحويل الصورة إلى ملصق بنجاح بعد إزالة الخلفية!* 🎁");
             // حذف الملفات المؤقتة
             return await fs.remove(result.outputPath);
@@ -49,7 +52,6 @@ export async function convertImageToStickerBg(message, MessageMedia, messageMeta
         }
     } catch (error) {
         logger.error('Error converting image to sticker:', error);
-        // await message.reply(`Error converting image to sticker: ${error}`);
         throw error;
     }
 }

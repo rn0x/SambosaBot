@@ -11,9 +11,13 @@ export async function convertMediaToSticker(message, MessageMedia, messageMeta) 
 
         const hasQuotedMsg = message.hasQuotedMsg;
         const keywords = ["!ملصق", "!استكر", "!متحرك", "!sticker", '!stk', 'ملصق'];
-        const messageBody = message?.body || '';
-        const messageCaption = message?._data?.caption || '';
-        if (!hasMatchingKeywords(messageBody, keywords) && !hasMatchingKeywords(messageCaption, keywords)) return;
+        const messageText = message?.body || message?._data?.caption || '';
+        if (!hasMatchingKeywords(messageText, keywords)) return;
+
+        // استخراج النص بعد الأمر (إن وُجد)
+        const extractedText = messageText.replace(/^[^\s]+\s*/, '').trim();
+        const stickerAuthor = extractedText || messageMeta.pushname || messageMeta.number;
+
         const targetMessage = hasQuotedMsg ? await message.getQuotedMessage() : message;
         const uniqueId = Date.now(); // لتجنب تداخل الملفات
 
@@ -23,7 +27,7 @@ export async function convertMediaToSticker(message, MessageMedia, messageMeta) 
             const processedMedia = new MessageMedia('image/png', media.data, `${uniqueId}.png`);
             // إرسال الصورة المعدلة
             // await client.sendMessage(message.from, processedMedia, { sendMediaAsSticker: true, stickerAuthor: author, stickerName: title });
-            await message.reply(processedMedia, undefined, { sendMediaAsSticker: true, stickerAuthor: messageMeta.pushname || messageMeta.number, stickerName: config.stickerName });
+            await message.reply(processedMedia, undefined, { sendMediaAsSticker: true, stickerAuthor: stickerAuthor, stickerName: config.stickerName });
             // await message.reply("*تم تحويل الصورة إلى ملصق بنجاح!* 🎁");
         } else if (targetMessage?.type === 'video' || targetMessage?.type === 'document' && media.mimetype === 'image/gif') {
             const tempDir = config.paths.temp; // مسار مجلد الصور
@@ -39,7 +43,7 @@ export async function convertMediaToSticker(message, MessageMedia, messageMeta) 
                 const videoBuffer = await fs.readFile(video.outputPath);
                 const base64Video = videoBuffer.toString('base64');
                 const processedMedia = new MessageMedia('image/webp', base64Video, `${uniqueId}.webp`);
-                await message.reply(processedMedia, undefined, { sendMediaAsSticker: true, stickerAuthor: messageMeta.pushname || messageMeta.number, stickerName: config.stickerName });
+                await message.reply(processedMedia, undefined, { sendMediaAsSticker: true, stickerAuthor: stickerAuthor, stickerName: config.stickerName });
                 // await message.reply("*تم تحويل الفيديو إلى ملصق متحرك بنجاح!* 🎁");
                 await fs.remove(video.outputPath);
             }

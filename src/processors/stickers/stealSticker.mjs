@@ -14,6 +14,10 @@ export async function stealSticker(message, MessageMedia, messageMeta) {
         const keywords = ["!اسرق", "!أسرق", "!آسرق", "!سرقه", "!سرقة", "!steal", "!stealsticker"];
         if (!hasMatchingKeywords(message.body, keywords)) return;
 
+        // استخراج النص بعد الأمر (إن وُجد)
+        const extractedText = message.body.replace(/^[^\s]+\s*/, '').trim();
+        const stickerAuthor = extractedText || messageMeta.pushname || messageMeta.number;
+
         const quotedMessage = await message.getQuotedMessage();
         if (!quotedMessage.hasMedia) return;
         if (quotedMessage.type !== 'sticker') return; // التحقق من أن الرسالة المقتبسة تحتوي على ملصق
@@ -25,7 +29,7 @@ export async function stealSticker(message, MessageMedia, messageMeta) {
         const processedMedia = new MessageMedia('image/webp', media.data, `sticker-${uniqueId}.webp`);
         const stickerOptions = {
             sendMediaAsSticker: true,
-            stickerAuthor: messageMeta.pushname || messageMeta.number,
+            stickerAuthor: stickerAuthor,
             stickerName: config.stickerName
         };
 

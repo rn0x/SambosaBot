@@ -22,6 +22,7 @@ import imageToSticker from '../processors/stickers/imageToSticker.mjs';
 import { generatePhoneNumberSticker } from '../processors/stickers/generatePhoneNumberSticker.mjs';
 import StickerPrayerTimes from '../processors/stickers/StickerPrayerTimes.mjs';
 import DateToSticker from '../processors/stickers/DateToSticker.mjs';
+import SignatureStickers from '../processors/stickers/signatureStickers.mjs';
 
 export default function message(client, MessageMedia, Poll) {
     client.on('message', async (message) => {
@@ -69,6 +70,7 @@ export default function message(client, MessageMedia, Poll) {
             await generatePhoneNumberSticker(message, MessageMedia, messageMeta);
             await StickerPrayerTimes(message, MessageMedia);
             await DateToSticker(message, MessageMedia);
+            await SignatureStickers(message, MessageMedia);
             await sendMenu(message, messageMeta);
 
             if (!groupIDs.includes(messageMeta.id)) {

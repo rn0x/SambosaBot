@@ -41,7 +41,7 @@ export async function convertImageToStickerBg(message, MessageMedia, messageMeta
             // إرسال الصورة المعدلة
             // await client.sendMessage(message.from, processedMedia, { sendMediaAsSticker: true, stickerAuthor: config.defaultAuthor, stickerName: messageMeta.pushname || messageMeta.number });
             await message.reply(processedMedia, undefined, { sendMediaAsSticker: true, stickerAuthor: messageMeta.pushname || messageMeta.number, stickerName: config.stickerName });
-            await message.reply("*تم تحويل الصورة إلى ملصق بنجاح بعد إزالة الخلفية!* 🎁");
+            // await message.reply("*تم تحويل الصورة إلى ملصق بنجاح بعد إزالة الخلفية!* 🎁");
             // حذف الملفات المؤقتة
             return await fs.remove(result.outputPath);
         } else {

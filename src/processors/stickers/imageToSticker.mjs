@@ -151,7 +151,7 @@ export default async function imageToSticker(message, MessageMedia, messageMeta)
             return await message.reply(`📝 يرجى إدخال نص صحيح بعد الأمر\n${exampleText}`);
         }
 
-        await message.reply(`⚡ جاري إنشاء الملصق بالنمط ${styleNumber}...`);
+        await message.reply(`⚡ طلبتَ النمط ${styleNumber}.. الملصق قادم خلال ثوانٍ 🚀`);
 
         // تحضير البيانات
         const originalStyle = styles[styleNumber];
@@ -196,9 +196,5 @@ export default async function imageToSticker(message, MessageMedia, messageMeta)
 
     } catch (error) {
         logger.error('فشل إنشاء ملصق الصورة:', error);
-        const errorMsg = config.isDevelopment
-            ? `⚠️ خطأ تقني: ${error.message}`
-            : '❌ حدث خطأ غير متوقع، يرجى المحاولة لاحقًا';
-        await message.reply(errorMsg);
     }
 }

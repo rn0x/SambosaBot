@@ -163,9 +163,5 @@ export default async function textToSticker(message, MessageMedia, messageMeta) 
 
     } catch (error) {
         logger.error('فشل إنشاء الملصق:', error);
-        const errorMsg = config.isDevelopment
-            ? `⚠️ خطأ تقني: ${error.message}`
-            : '❌ حدث خطأ غير متوقع، يرجى المحاولة بوقت لاحق';
-        await message.reply(errorMsg);
     }
 }

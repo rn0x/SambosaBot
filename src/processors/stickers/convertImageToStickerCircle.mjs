@@ -69,7 +69,7 @@ export async function convertImageToStickerCircle(message, MessageMedia, message
         await message.reply(processedMedia, undefined, { sendMediaAsSticker: true, stickerAuthor: messageMeta.pushname || messageMeta.number, stickerName: config.stickerName });
 
         // إرجاع رد للمستخدم
-        await message.reply("*تم تحويل الصورة إلى ملصق دائري بنجاح!* 🎁");
+        // await message.reply("*تم تحويل الصورة إلى ملصق دائري بنجاح!* 🎁");
 
         // حذف الملفات المؤقتة
         await fs.remove(inputPath + '.png');

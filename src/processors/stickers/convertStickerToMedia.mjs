@@ -51,7 +51,7 @@ export async function convertStickerToMedia(message, MessageMedia) {
             const processedMedia = new MessageMedia('video/mp4', base64File, `${uniqueId}.mp4`);
             // إرسال الصورة المعدلة
             await message.reply(processedMedia, undefined, { caption: result.message, sendVideoAsGif: true });
-            await message.reply("🔄 *تم تحويل الملصق الى صورة متحركة بنجاح!* 📽️");
+            // await message.reply("🔄 *تم تحويل الملصق الى صورة متحركة بنجاح!* 📽️");
             await fs.remove(result.outputPath);
         }
 

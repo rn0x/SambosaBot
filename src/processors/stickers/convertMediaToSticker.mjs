@@ -24,7 +24,7 @@ export async function convertMediaToSticker(message, MessageMedia, messageMeta) 
             // إرسال الصورة المعدلة
             // await client.sendMessage(message.from, processedMedia, { sendMediaAsSticker: true, stickerAuthor: author, stickerName: title });
             await message.reply(processedMedia, undefined, { sendMediaAsSticker: true, stickerAuthor: messageMeta.pushname || messageMeta.number, stickerName: config.stickerName });
-            await message.reply("*تم تحويل الصورة إلى ملصق بنجاح!* 🎁");
+            // await message.reply("*تم تحويل الصورة إلى ملصق بنجاح!* 🎁");
         } else if (targetMessage?.type === 'video' || targetMessage?.type === 'document' && media.mimetype === 'image/gif') {
             const tempDir = config.paths.temp; // مسار مجلد الصور
             const inputPath = path.resolve(tempDir, `input-${uniqueId}.mp4`);
@@ -40,7 +40,7 @@ export async function convertMediaToSticker(message, MessageMedia, messageMeta) 
                 const base64Video = videoBuffer.toString('base64');
                 const processedMedia = new MessageMedia('image/webp', base64Video, `${uniqueId}.webp`);
                 await message.reply(processedMedia, undefined, { sendMediaAsSticker: true, stickerAuthor: messageMeta.pushname || messageMeta.number, stickerName: config.stickerName });
-                await message.reply("*تم تحويل الفيديو إلى ملصق متحرك بنجاح!* 🎁");
+                // await message.reply("*تم تحويل الفيديو إلى ملصق متحرك بنجاح!* 🎁");
                 await fs.remove(video.outputPath);
             }
 

@@ -11,18 +11,18 @@ export async function getNextPrayerTime() {
     const timings = prayTimes.getTimes(today, MAKKAH_COORDINATES, +3, 0, '24h');
 
     const prayers = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'];
-    
+
     // البحث عن الصلاة التالية
     for (const prayer of prayers) {
         const [hours, minutes] = timings[prayer].split(':');
         const prayerTime = new Date(today);
         prayerTime.setHours(parseInt(hours), parseInt(minutes), 0);
-        
+
         if (prayerTime > now) {
             const timeLeft = prayerTime - now;
             const hoursLeft = Math.floor(timeLeft / (1000 * 60 * 60));
             const minutesLeft = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-            
+
             return {
                 name: getArabicPrayerName(prayer),
                 time: timings[prayer],
@@ -70,8 +70,8 @@ export async function createPrayerTimeSticker() {
         <meta charset="UTF-8">
         <style>
             @font-face {
-                font-family: 'Changa';
-                src: url('https://fonts.googleapis.com/css2?family=Changa:wght@400;700&display=swap');
+                font-family: 'Cairo';
+                src: url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
             }
             body {
                 background: linear-gradient(135deg, #1a5e63, #0d2c4d);
@@ -82,7 +82,7 @@ export async function createPrayerTimeSticker() {
                 align-items: center;
                 justify-content: center;
                 color: white;
-                font-family: 'Changa', 'Noto Naskh Arabic', 'Arial', sans-serif;
+                font-family: 'Cairo', 'Noto Naskh Arabic', 'Arial', sans-serif;
             }
             .container {
                 text-align: center;
@@ -119,10 +119,10 @@ export async function createPrayerTimeSticker() {
     <body>
         <div class="container">
             <div class="title">موعد الأذان القادم</div>
-            <div class="prayer-name">${prayerInfo.name}</div>
-            <div class="time-remaining">🕒 المتبقي: ${prayerInfo.remaining}</div>
-            <div class="prayer-time">⏰ الوقت: ${prayerInfo.time}</div>
-            <div class="date">📅 ${currentDate}</div>
+            <div class="prayer-name">{{name}}</div>
+            <div class="time-remaining">🕒 المتبقي: {{remaining}}</div>
+            <div class="prayer-time">⏰ الوقت: {{time}}</div>
+            <div class="date">📅 {{currentDate}}</div>
         </div>
     </body>
     </html>
@@ -130,6 +130,12 @@ export async function createPrayerTimeSticker() {
 
     return generateImageFromHtml({
         htmlTemplate,
+        data: {
+            name: prayerInfo.name,
+            remaining: prayerInfo.remaining,
+            time: prayerInfo.time,
+            currentDate: currentDate,
+        },
         viewport: { width: 512, height: 512, deviceScaleFactor: 2 },
         retryCount: 3
     });

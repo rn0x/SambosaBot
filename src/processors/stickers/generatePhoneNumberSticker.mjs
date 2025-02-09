@@ -37,8 +37,8 @@ export async function generatePhoneNumberSticker(message, MessageMedia, messageM
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <style>
                     @font-face {
-                        font-family: 'Changa';
-                        src: url('https://fonts.googleapis.com/css2?family=Changa:wght@400;700&display=swap');
+                        font-family: 'Cairo';
+                        src: url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
                     }
                     body {
                         display: flex;
@@ -47,7 +47,7 @@ export async function generatePhoneNumberSticker(message, MessageMedia, messageM
                         height: 100vh;
                         margin: 0;
                         background-color: #25D366;
-                        font-family: 'Changa', 'Noto Naskh Arabic', 'Arial', sans-serif;
+                        font-family: 'Cairo', 'Noto Naskh Arabic', 'Arial', sans-serif;
                         color: white;
                     }
                     .container {
@@ -66,8 +66,8 @@ export async function generatePhoneNumberSticker(message, MessageMedia, messageM
             </head>
             <body>
                 <div class="container">
-                    <img src="data:image/png;base64,${iconBase64}" alt="WhatsApp Icon" class="icon">
-                    <div class="phone-number">${phoneNumber}</div>
+                    <img src="data:image/png;base64,{{iconBase64}}" alt="WhatsApp Icon" class="icon">
+                    <div class="phone-number">{{phoneNumber}}</div>
                 </div>
             </body>
             </html>
@@ -76,7 +76,7 @@ export async function generatePhoneNumberSticker(message, MessageMedia, messageM
         // إنشاء الصورة من القالب HTML
         const base64Image = await generateImageFromHtml({
             htmlTemplate: htmlTemplate,
-            data: {}, // لا حاجة لبيانات إضافية هنا
+            data: { phoneNumber: phoneNumber, iconBase64: iconBase64 },
             viewport: {
                 width: 512,
                 height: 512,

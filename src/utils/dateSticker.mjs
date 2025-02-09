@@ -29,7 +29,7 @@ export async function createDateSticker() {
         <style>
             @font-face {
                 font-family: 'Changa';
-                src: url('https://fonts.googleapis.com/css2?family=Changa:wght@400;700&display=swap');
+                src: url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
             }
             body {
                 background: linear-gradient(45deg,rgb(39, 42, 22),rgb(101, 115, 58));
@@ -39,7 +39,7 @@ export async function createDateSticker() {
                 align-items: center;
                 justify-content: center;
                 color: white;
-                font-family: 'Changa', 'Noto Naskh Arabic', 'Arial', sans-serif;
+                font-family: 'Cairo', 'Noto Naskh Arabic', 'Arial', sans-serif;
             }
             .container {
                 text-align: center;
@@ -69,8 +69,8 @@ export async function createDateSticker() {
     <body>
         <div class="container">
             <div class="title">📅 تاريخ اليوم</div>
-            <div class="date">${gregorianDate}</div>
-            <div class="hijri-date">${hijriDateFormatted}</div>
+            <div class="date">{{gregorianDate}}</div>
+            <div class="hijri-date">{{hijriDateFormatted}}</div>
         </div>
     </body>
     </html>
@@ -78,6 +78,7 @@ export async function createDateSticker() {
 
     return generateImageFromHtml({
         htmlTemplate,
+        data: { gregorianDate: gregorianDate, hijriDateFormatted: hijriDateFormatted },
         viewport: { width: 512, height: 512, deviceScaleFactor: 2 },
         retryCount: 3
     });

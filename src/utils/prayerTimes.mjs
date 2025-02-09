@@ -10,7 +10,7 @@ export async function getNextPrayerTime() {
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const timings = prayTimes.getTimes(today, MAKKAH_COORDINATES, +3, 0, '24h');
 
-    const prayers = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+    const prayers = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'];
     
     // البحث عن الصلاة التالية
     for (const prayer of prayers) {
@@ -45,11 +45,11 @@ export async function getNextPrayerTime() {
 
 function getArabicPrayerName(englishName) {
     const names = {
-        Fajr: 'الفجر',
-        Dhuhr: 'الظهر',
-        Asr: 'العصر',
-        Maghrib: 'المغرب',
-        Isha: 'العشاء'
+        fajr: 'الفجر',
+        dhuhr: 'الظهر',
+        asr: 'العصر',
+        maghrib: 'المغرب',
+        isha: 'العشاء'
     };
     return names[englishName] || englishName;
 }
@@ -89,42 +89,35 @@ export async function createPrayerTimeSticker() {
                 padding: 20px;
             }
             .title {
-                font-size: 28px;
+                font-size: 43px;
                 margin-bottom: 15px;
                 color: #FFD700;
                 text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
             }
             .prayer-name {
-                font-size: 42px;
+                font-size: 57px;
                 margin: 20px 0;
                 color: #fff;
                 text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
             }
             .time-remaining {
-                font-size: 34px;
+                font-size: 30px;
                 margin: 15px 0;
                 color: #FFA500;
             }
             .prayer-time {
-                font-size: 38px;
+                font-size: 45px;
                 margin: 15px 0;
             }
             .date {
-                font-size: 20px;
+                font-size: 30px;
                 margin-top: 25px;
                 color: #ddd;
-            }
-            .mosque-icon {
-                width: 80px;
-                height: 80px;
-                margin-bottom: 20px;
-                filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3));
             }
         </style>
     </head>
     <body>
         <div class="container">
-            <img src="https://cdn-icons-png.flaticon.com/512/2097/2097080.png" class="mosque-icon" alt="Mosque">
             <div class="title">موعد الأذان القادم</div>
             <div class="prayer-name">${prayerInfo.name}</div>
             <div class="time-remaining">🕒 المتبقي: ${prayerInfo.remaining}</div>

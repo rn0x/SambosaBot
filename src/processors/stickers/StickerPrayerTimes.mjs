@@ -1,8 +1,9 @@
 import hasMatchingKeywords from '../../utils/hasMatchingKeywords.mjs';
 import { createPrayerTimeSticker } from '../../utils/prayerTimes.mjs';
 import logger from '../../utils/logger.mjs';
+import { config } from '../../../config.mjs';
 
-export default async function StickerPrayerTimes(message, MessageMedia, messageMeta) {
+export default async function StickerPrayerTimes(message, MessageMedia) {
     try {
         const keywords = ["!صلاة", "!صلاه", "!prayer"];
         if (!hasMatchingKeywords(message.body, keywords)) return;
@@ -14,14 +15,13 @@ export default async function StickerPrayerTimes(message, MessageMedia, messageM
 
             await message.reply(media, null, {
                 sendMediaAsSticker: true,
-                stickerAuthor: messageMeta.pushname || messageMeta.number,
-                stickerName: 'الصلاة القادمة',
+                stickerAuthor: 'الصلاة القادمة',
+                stickerName: config.stickerName,
                 stickerCategories: ['✨', '❤️']
             });
         }
 
     } catch (error) {
-        console.log(error);
         logger.error('فشل في إنشاء ملصق الصلاة:', error);
     }
 }

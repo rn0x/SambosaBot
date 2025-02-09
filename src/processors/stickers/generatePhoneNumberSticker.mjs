@@ -37,8 +37,8 @@ export async function generatePhoneNumberSticker(message, MessageMedia, messageM
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <style>
                     @font-face {
-                        font-family: 'Cairo';
-                        src: url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+                        font-family: 'Changa';
+                        src: url('https://fonts.googleapis.com/css2?family=Changa:wght@400;700&display=swap');
                     }
                     body {
                         display: flex;
@@ -47,7 +47,7 @@ export async function generatePhoneNumberSticker(message, MessageMedia, messageM
                         height: 100vh;
                         margin: 0;
                         background-color: #25D366;
-                        font-family: 'Cairo', 'Noto Naskh Arabic', 'Arial', sans-serif;
+                        font-family: 'Changa', 'Noto Naskh Arabic', 'Arial', sans-serif;
                         color: white;
                     }
                     .container {

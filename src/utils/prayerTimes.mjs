@@ -70,8 +70,8 @@ export async function createPrayerTimeSticker() {
         <meta charset="UTF-8">
         <style>
             @font-face {
-                font-family: 'Cairo';
-                src: url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+                font-family: 'Changa';
+                src: url('https://fonts.googleapis.com/css2?family=Changa:wght@400;700&display=swap');
             }
             body {
                 background: linear-gradient(135deg, #1a5e63, #0d2c4d);
@@ -82,7 +82,7 @@ export async function createPrayerTimeSticker() {
                 align-items: center;
                 justify-content: center;
                 color: white;
-                font-family: 'Cairo', 'Noto Naskh Arabic', 'Arial', sans-serif;
+                font-family: 'Changa', 'Noto Naskh Arabic', 'Arial', sans-serif;
             }
             .container {
                 text-align: center;

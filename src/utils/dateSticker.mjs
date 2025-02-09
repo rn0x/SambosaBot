@@ -28,8 +28,8 @@ export async function createDateSticker() {
         <meta charset="UTF-8">
         <style>
             @font-face {
-                font-family: 'Cairo';
-                src: url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+                font-family: 'Changa';
+                src: url('https://fonts.googleapis.com/css2?family=Changa:wght@400;700&display=swap');
             }
             body {
                 background: linear-gradient(45deg,rgb(39, 42, 22),rgb(101, 115, 58));
@@ -39,7 +39,7 @@ export async function createDateSticker() {
                 align-items: center;
                 justify-content: center;
                 color: white;
-                font-family: 'Cairo', 'Noto Naskh Arabic', 'Arial', sans-serif;
+                font-family: 'Changa', 'Noto Naskh Arabic', 'Arial', sans-serif;
             }
             .container {
                 text-align: center;

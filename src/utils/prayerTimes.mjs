@@ -82,7 +82,7 @@ export async function createPrayerTimeSticker() {
                 align-items: center;
                 justify-content: center;
                 color: white;
-                font-family: 'Cairo', sans-serif;
+                font-family: 'Cairo', 'Noto Naskh Arabic', 'Arial', sans-serif;
             }
             .container {
                 text-align: center;

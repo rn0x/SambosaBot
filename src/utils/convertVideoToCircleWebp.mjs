@@ -91,9 +91,7 @@ const convertVideoToCircleWebp = async (inputVideo) => {
     } finally {
         // 5. تنظيف الملفات المؤقتة حتى في حالة حدوث خطأ
         if (fs.existsSync(tempDir)) {
-            fs.rm(tempDir, { recursive: true }, () => {
-                console.log('تم حذف المجلد المؤقت.');
-            });
+            fs.rm(tempDir, { recursive: true });
         }
     }
 };

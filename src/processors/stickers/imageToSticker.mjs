@@ -151,7 +151,7 @@ export default async function imageToSticker(message, MessageMedia, messageMeta)
             return await message.reply(`📝 يرجى إدخال نص صحيح بعد الأمر\n${exampleText}`);
         }
 
-        await message.reply(`⚡ طلبتَ النمط ${styleNumber}.. الملصق قادم خلال ثوانٍ 🚀`);
+        // await message.reply(`⚡ طلبتَ النمط ${styleNumber}.. الملصق قادم خلال ثوانٍ 🚀`);
 
         // تحضير البيانات
         const originalStyle = styles[styleNumber];

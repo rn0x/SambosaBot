@@ -131,7 +131,7 @@ export default async function textToSticker(message, MessageMedia, messageMeta) 
             return await message.reply(`📝 يرجى إدخال نص صحيح بعد الأمر\n${exampleText}`);
         }
 
-        await message.reply(`⚡ طلبتَ النمط ${styleNumber}.. الملصق قادم خلال ثوانٍ 🚀`);
+        // await message.reply(`⚡ طلبتَ النمط ${styleNumber}.. الملصق قادم خلال ثوانٍ 🚀`);
 
         const { font, color, shadow, fontSize } = styles[styleNumber];
 

@@ -55,7 +55,7 @@ export async function generatePhoneNumberSticker(message, MessageMedia, messageM
                         margin-bottom: 20px;
                     }
                     .phone-number {
-                        font-size: 32px;
+                        font-size: 52px;
                         font-weight: bold;
                     }
                 </style>

@@ -45,7 +45,7 @@ export async function videoToStickerWithText(message, MessageMedia, messageMeta)
             outputFile: processedPath,
             text: extractedText,
             fontPath: fontPath || './fonts/NotoSansArabic.ttf',
-            fontSize: 70,
+            fontSize: 80,
             fontColor: 'yellow',
             maxCharsPerLine: 15,
             duration: 7,

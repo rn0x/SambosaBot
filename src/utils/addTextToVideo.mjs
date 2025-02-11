@@ -56,7 +56,7 @@ const getVideoDimensions = async (inputFile) => {
  * يولد فلتر drawtext مع حسابات ديناميكية
  */
 const generateDrawTextFilter = (lines, videoHeight, fontPath, fontSize, fontColor) => {
-  const lineSpacing = fontSize * 0.2;
+  const lineSpacing = fontSize * 0.4;
   const totalTextHeight = (fontSize + lineSpacing) * lines.length;
   const startY = videoHeight - totalTextHeight - (videoHeight * 0.05); // 5% من الأسفل
 

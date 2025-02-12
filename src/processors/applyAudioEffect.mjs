@@ -85,7 +85,7 @@ export async function applyAudioEffect(message, MessageMedia, messageMeta) {
             1: "asetrate=48000*1.5,atempo=0.66,aresample=48000",            // تأثير "تشيبمبنك" (صوت مرتفع)
             2: "asetrate=48000*0.7,atempo=1.43,aresample=48000",            // تأثير "صوت عميق" (منخفض)
             3: "aecho=0.8:0.9:1000:0.3",                                   // تأثير صدى/ريفرب
-            4: "afftfilt=real='1+cos(2*3.141592653589793*(t/1000))':imag='sin(2*3.141592653589793*(t/1000))'", // تأثير روبوت
+            4: "afftfilt=real='1':imag='0'", // تأثير روبوت
             5: "lowpass=f=300,asetrate=22050",                             // تأثير تحت الماء
             6: "highpass=f=300,lowpass=f=3000",                            // تأثير هاتف (تصفية الترددات)
             7: "acrusher=level_in=1:level_out=1:bits=8:mode=log",          // تأثير تشويش/دستورشن

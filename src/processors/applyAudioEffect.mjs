@@ -70,10 +70,10 @@ export async function applyAudioEffect(message, MessageMedia, messageMeta) {
         // إنشاء معرف فريد ومسار للملفات المؤقتة
         const uniqueId = Date.now();
         const tempDir = config.paths.temp;
-        await fs.ensureDir(tempDir);        
+        await fs.ensureDir(tempDir);
 
         const ext = getExtension(media.mimetype);
-        if (ext === 'dat')  return 
+        if (ext === 'dat') return
         const inputFileName = path.join(tempDir, `input_${uniqueId}.${ext}`);
         const outputFileName = path.join(tempDir, `output_${uniqueId}.${ext}`);
 
@@ -82,26 +82,50 @@ export async function applyAudioEffect(message, MessageMedia, messageMeta) {
 
         // تعريف 15 تأثير صوتي باستخدام فلترات FFmpeg
         const effects = {
-            1: "asetrate=48000*1.5,atempo=0.66,aresample=48000",            // تأثير "تشيبمبنك" (صوت مرتفع)
-            2: "asetrate=48000*0.7,atempo=1.43,aresample=48000",            // تأثير "صوت عميق" (منخفض)
-            3: "aecho=0.8:0.9:1000:0.3",                                   // تأثير صدى/ريفرب
-            4: "asetrate=44100*0.8,atempo=1.25,vibrato=f=6:d=0.5", // تأثير روبوت
-            5: "lowpass=f=300,asetrate=22050",                             // تأثير تحت الماء
-            6: "highpass=f=300,lowpass=f=3000",                            // تأثير هاتف (تصفية الترددات)
-            7: "acrusher=level_in=1:level_out=1:bits=8:mode=log",          // تأثير تشويش/دستورشن
-            8: "areverse",                                               // عكس الصوت
-            9: "atempo=0.5",                                             // تأثير تباطؤ الصوت
-            10: "atempo=1.8",                                            // تأثير تسريع الصوت
-            11: "asetrate=48000*1.3,atempo=0.77,aresample=48000,aecho=0.3:0.4:500:0.3",
-            // تأثير مضحك (مزج تغيير الحدة مع صدى بسيط)
-            12: "asetrate=48000*1.2,atempo=0.83,aresample=48000,aphaser=in_gain=0.4:out_gain=0.8:delay=0.7:decay=0.5",
-            // تأثير يعطي إحساسًا بـ "الطرب"
-            13: "asetrate=48000*0.8,atempo=1.25,aresample=48000,aecho=0.8:0.85:1500:0.2",
-            // تأثير يجعل الصوت يبدو محزنًا
-            14: "asetrate=48000*2.0,atempo=0.5,aresample=48000,aecho=0.3:0.4:300:0.2",
-            // تأثير يجعل الصوت يشبه صوت طفل
-            15: "asetrate=48000*0.6,atempo=1.67,aresample=48000,acrusher=level_in=1:level_out=1:bits=4:mode=log"
-            // تأثير مميز (يشبه الصوت "الكاذ" بمعالجة تشويش عالية)
+            1: "rubberband=pitch=0.5:tempo=1.0, lowpass=1500, aecho=0.8:0.9:500:0.5",
+            // تأثير الروبوت الثقيل (مثل Transformers)
+
+            2: "compand=attacks=0.1:points=-90/-90|-30/-10|0/-0, stereowiden",
+            // صوت فخم سينمائي (تعزيز العمق والاستريو)
+
+            3: "asetrate=48000*1.8, atempo=0.55, highpass=300, vibrato=f=15:d=0.3",
+            // صوت طفل واقعي (طبقة عالية + اهتزاز خفيف)
+
+            4: "afftfilt=real='hypot(re,im)*sin(0)':imag='hypot(re,im)*cos(0)':win_size=512:overlap=0.75, aphaser=type=t, flanger, vibrato=f=10",
+            // تأثير روبوت
+
+            5: "aecho=0.8:0.9:1000:0.3",
+            // تأثير صدى/ريفرب
+
+            6: "chorus=0.5:0.9:50:0.4:0.25:2, rubberband=pitch=1.2",
+            // تأثير الجوقة السماوي (طبقات صوتية متعددة)
+
+            7: "areverse",
+            // عكس الصوت
+
+            8: "firequalizer=gain_entry='entry(0, -20); entry(1000, 0); entry(4000,15)'",
+            // الصوت الميتافيزيقي (تعزيز الترددات الغريبة)
+
+            9: "acrusher=level_in=1:level_out=1:bits=8:mode=log",
+            // تأثير تشويش/دستورشن
+
+            10: "vibrato=f=2.5:d=1.0, asetrate=48000*0.85",
+            // تأثير السكارى (اهتزاز بطيء + طبقة منخفضة)
+
+            11: "bass=g=10:f=60:w=0.5, lowpass=f=120, volume=90",
+            // تأثير السينما المنزلية (تعزيز الـ Bass والـ LFE)
+
+            12: "atempo=0.75, asetrate=44100*1.2, aecho=0.8:0.9:1000:0.3, bass=g=-10:f=50:w=0.8",
+            // تأثيرًا صوتيًا مرعبًا لخلق جو من الرعب
+
+            13: "adelay=1500|1500, aecho=0.7:0.7:30:0.7",
+            // تأثير الغرفة السرية (صدى غامض مع تأخير)
+
+            14: "atempo=1.5, asetrate=44100*1.5, afftdn",
+            // تأثر مضحك
+
+            15: "aecho=0.8:0.9:500:0.4, aecho=0.7:0.8:1000:0.5, atempo=0.85, asetrate=44100*0.8, bass=g=-12:f=120:w=0.6, volume=1.5"
+            // تاثير تكرار
         };
 
         const filter = effects[effectNumber];

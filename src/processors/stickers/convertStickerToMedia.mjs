@@ -39,7 +39,7 @@ export async function convertStickerToMedia(message, MessageMedia) {
             const processedMedia = new MessageMedia('image/png', base64File, `${uniqueId}.png`);
             // إرسال الصورة المعدلة
             await message.reply(processedMedia);
-            await message.reply("🔄 *تم تحويل الملصق الى صورة بنجاح!* 🖼️");
+            // await message.reply("🔄 *تم تحويل الملصق الى صورة بنجاح!* 🖼️");
             await fs.remove(inputFilePath);
 
         } else {

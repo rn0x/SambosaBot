@@ -13,7 +13,7 @@ export async function videoToStickerWithText(message, MessageMedia, messageMeta)
         if (!hasMatchingKeywords(messageText, keywords)) return;
 
         const extractedText = messageText.replace(/^[^\s]+\s*/, '').trim();
-        const stickerAuthor = extractedText || messageMeta.pushname || messageMeta.number;
+        const stickerAuthor = messageMeta.pushname || messageMeta.number;
 
         if (!extractedText) return await message.reply(`📝 يرجى إدخال نص صحيح بعد الأمر`);
 

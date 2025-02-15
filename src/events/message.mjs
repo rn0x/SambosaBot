@@ -2,7 +2,7 @@
 
 import path from 'path';
 import fs from 'fs-extra';
-import client from '../client.mjs'
+// import client from '../client.mjs'
 import { config } from '../../config.mjs';
 import logger from '../utils/logger.mjs'
 import { convertImageToStickerBg } from '../processors/stickers/convertImageToStickerBg.mjs';
@@ -28,7 +28,7 @@ import { applyAudioEffect } from '../processors/applyAudioEffect.mjs';
 import { sendHijriCalendar } from '../processors/sendHijriCalendar.mjs';
 import { autoKick } from '../processors/messages/autoKick.mjs';
 
-export default function message(MessageMedia, Poll) {
+export default function message(client, MessageMedia, Poll) {
     client.on('message', async (message) => {
         try {
             const groupIDs = config.allowedGroups;

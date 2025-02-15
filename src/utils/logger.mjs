@@ -40,16 +40,20 @@ class Logger {
   error(message, err = null) {
     const errorMessage = err ? `${message} - ${err.message}\nStack: ${err.stack}` : message;
     this.log('error', errorMessage);
+    console.error('error: ', errorMessage);
   }
 
   // تسجيل التحذيرات
   warning(message) {
     this.log('warning', message);
+    console.warn('warning: ', message);
   }
 
   // تسجيل المعلومات
   info(message) {
     this.log('info', message);
+    console.log('info: ', message);
+
   }
 }
 

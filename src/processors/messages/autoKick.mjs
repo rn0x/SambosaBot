@@ -5,9 +5,11 @@ import client from '../../client.mjs';
 
 export async function autoKick(message, messageMeta, chat) {
     try {
-        // التحقق مما إذا كانت الرسالة تحتوي على رابط
+
+        // التحقق مما إذا كانت الرسالة تحتوي على رابط أو رقم هاتف
         const linkPattern = /(https?:\/\/[^\s]+)/g;
-        if (!linkPattern.test(message.body)) return;
+        const phonePattern = /(\+?[0-9]{10,15})/g;
+        if (!linkPattern.test(message.body) && !phonePattern.test(message.body)) return;
 
         // التأكد من أن الرسالة من قروب
         if (!messageMeta.isGroup) return;
@@ -36,7 +38,7 @@ export async function autoKick(message, messageMeta, chat) {
         // طرد العضو من القروب
         await chat.removeParticipants([senderId]).catch(() => { });
         // إرسال رسالة توضيحية للعضو
-        return await message.reply(`🚫 تم طردك من القروب بسبب مخالفة القوانين وإرسال روابط.`);
+        return await message.reply(`🚫 تم طردك من القروب بسبب مخالفة القوانين وإرسال روابط أو أرقام هواتف.`);
     } catch (error) {
         logger.error('Error in autoKick:', error);
     }

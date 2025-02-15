@@ -35,10 +35,8 @@ export async function autoKick(message, messageMeta, chat) {
         await message.delete(true).catch(() => { });
         // طرد العضو من القروب
         await chat.removeParticipants([senderId]).catch(() => { });
-        logger.info(`تم طرد ${senderId} من القروب بسبب إرسال رابط.`);
-
         // إرسال رسالة توضيحية للعضو
-        await message.reply(`🚫 تم طردك من القروب بسبب مخالفة القوانين وإرسال روابط.`);
+        return await message.reply(`🚫 تم طردك من القروب بسبب مخالفة القوانين وإرسال روابط.`);
     } catch (error) {
         logger.error('Error in autoKick:', error);
     }

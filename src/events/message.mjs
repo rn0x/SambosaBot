@@ -26,8 +26,9 @@ import SignatureStickers from '../processors/stickers/signatureStickers.mjs';
 import { videoToStickerWithText } from '../processors/stickers/videoToStickerWithText.mjs';
 import { applyAudioEffect } from '../processors/applyAudioEffect.mjs';
 import { sendHijriCalendar } from '../processors/sendHijriCalendar.mjs';
+import { autoKick } from '../processors/messages/autoKick.mjs';
 
-export default function message(client, MessageMedia, Poll) {
+export default function message(MessageMedia, Poll) {
     client.on('message', async (message) => {
         try {
             const groupIDs = config.allowedGroups;
@@ -43,12 +44,10 @@ export default function message(client, MessageMedia, Poll) {
                 deviceType: message.deviceType,
                 isGroup: message.from.includes('@g.us'),
                 chatName: getChat.name,
+                sender: message.author,
             };
 
-            // التعامل مع الروابط
-            if (messageMeta.isGroup && /https?:\/\/\S+/i.test(message.body)) {
-                return await message.delete(true).catch(() => { }); // حذف الرسالة
-            }
+            await autoKick(message, messageMeta, getChat); // حذف الروابط والمرسل
 
             // التعامل مع السبام
             await handleSpam(message, messageMeta);

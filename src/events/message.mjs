@@ -47,8 +47,6 @@ export default function message(MessageMedia, Poll) {
                 sender: message.author,
             };
 
-            await autoKick(message, messageMeta, getChat); // حذف الروابط والمرسل
-
             // التعامل مع السبام
             await handleSpam(message, messageMeta);
 
@@ -83,6 +81,8 @@ export default function message(MessageMedia, Poll) {
                 await IslamicQuiz(message, Poll);
                 await checkAnswer(message);
             }
+
+            await autoKick(message, messageMeta, getChat); // حذف الروابط والمرسل
 
             // await message.reply(new Poll('Winter or Summer?', ['Winter', 'Summer']));
 

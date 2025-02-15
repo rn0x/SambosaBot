@@ -25,6 +25,7 @@ import DateToSticker from '../processors/stickers/DateToSticker.mjs';
 import SignatureStickers from '../processors/stickers/signatureStickers.mjs';
 import { videoToStickerWithText } from '../processors/stickers/videoToStickerWithText.mjs';
 import { applyAudioEffect } from '../processors/applyAudioEffect.mjs';
+import { sendHijriCalendar } from '../processors/sendHijriCalendar.mjs';
 
 export default function message(client, MessageMedia, Poll) {
     client.on('message', async (message) => {
@@ -53,8 +54,7 @@ export default function message(client, MessageMedia, Poll) {
             await handleSpam(message, messageMeta);
 
             // نلقائي يعمل في قروبات معينة فقط
-            // اذا اردت ان يعمل في جميع القروبات قم بحذف الشرط  && groupIDs.includes(messageMeta.id)
-            if (messageMeta.isGroup && groupIDs.includes(messageMeta.id)) {
+            if (messageMeta.isGroup) {
                 if (config.toStickerAuto) {
                     await convertImageToStickerAuto(message, MessageMedia, messageMeta);
                     await convertVideoToStickerAuto(message, MessageMedia, messageMeta);
@@ -74,10 +74,12 @@ export default function message(client, MessageMedia, Poll) {
             await DateToSticker(message, MessageMedia);
             await SignatureStickers(message, MessageMedia);
             await videoToStickerWithText(message, MessageMedia, messageMeta);
-            await applyAudioEffect(message, MessageMedia, messageMeta);
             await sendMenu(message, messageMeta);
 
+            // المميزات التالية لاتعمل في بعض القروبات المحدده في  groupIDs
             if (!groupIDs.includes(messageMeta.id)) {
+                await sendHijriCalendar(message, MessageMedia);
+                await applyAudioEffect(message, MessageMedia, messageMeta);
                 await IslamicQuiz(message, Poll);
                 await checkAnswer(message);
             }

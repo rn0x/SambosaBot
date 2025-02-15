@@ -1,15 +1,12 @@
 import fs from 'fs-extra';
 import path from 'path';
-import { fileURLToPath } from 'url';
 import hasMatchingKeywords from '../utils/hasMatchingKeywords.mjs';
 import logger from '../utils/logger.mjs'
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import { config } from '../../config.mjs'
 
 // تحميل بيانات JSON
 const loadData = async () => {
-    const IslamicQuizPath = path.join(__dirname, '../data/IslamicQuiz.json');
+    const IslamicQuizPath = path.join(config.paths.public, 'json', 'IslamicQuiz.json');
     try {
         const data = await fs.readJson(IslamicQuizPath);
         return data;
@@ -58,7 +55,7 @@ export default async function IslamicQuiz(message, Poll) {
         const sentMessage = await message.reply(poll);
 
         // قراءة البيانات الحالية من ملف quizData
-        const quizDataPath = path.join(__dirname, '../data/quizData.json');
+        const quizDataPath = path.join(config.paths.public, 'json',  'quizData.json');
 
         // فحص وجود الملف وتنسيقه قبل القراءة
         let quizData = [];

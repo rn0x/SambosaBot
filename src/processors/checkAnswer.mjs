@@ -1,14 +1,11 @@
 import fs from 'fs-extra';
 import path from 'path';
-import { fileURLToPath } from 'url';
 import hasMatchingKeywords from "../utils/hasMatchingKeywords.mjs";
 import logger from '../utils/logger.mjs'
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import { config } from '../../config.mjs'
 
 export default async function checkAnswer(message) {
-    const keywords = ["!الإجابة", "!الإجابه", "!اجابه","!إجابه","!إجابة", "!اجابة", "!أجابة", "!أجابه", "!answer"];
+    const keywords = ["!الإجابة", "!الإجابه", "!اجابه", "!إجابه", "!إجابة", "!اجابة", "!أجابة", "!أجابه", "!answer"];
     if (!hasMatchingKeywords(message.body, keywords)) return;
 
     try {
@@ -17,7 +14,7 @@ export default async function checkAnswer(message) {
 
         if (!quotedMessage) return
 
-        const quizDataPath = path.join(__dirname, '../data/quizData.json');
+        const quizDataPath = path.join(config.paths.public, 'json', 'quizData.json');
         // تأكد من وجود المجلد والملف
         await fs.ensureDir(path.dirname(quizDataPath));
         await fs.ensureFile(quizDataPath);

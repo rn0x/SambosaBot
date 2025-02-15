@@ -76,9 +76,10 @@ export default function message(client, MessageMedia, Poll) {
             await videoToStickerWithText(message, MessageMedia, messageMeta);
             await sendMenu(message, messageMeta);
 
+            await sendHijriCalendar(message, MessageMedia);
+
             // المميزات التالية لاتعمل في بعض القروبات المحدده في  groupIDs
             if (!groupIDs.includes(messageMeta.id)) {
-                await sendHijriCalendar(message, MessageMedia);
                 await applyAudioEffect(message, MessageMedia, messageMeta);
                 await IslamicQuiz(message, Poll);
                 await checkAnswer(message);

@@ -150,12 +150,12 @@ apk add imagemagick
 
 ## 10. استنساخ المستودع من GitHub:
 ```bash
-git clone https://github.com/Alsarmad/whatsapp_adhkar
+git clone https://github.com/rn0x/SambosaBot
 ```
 
 ## 11. الدخول إلى المجلد المثبت:
 ```bash
-cd whatsapp_adhkar
+cd SambosaBot
 ```
 
 ## 12. تثبيت التبعيات باستخدام NPM:

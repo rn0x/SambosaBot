@@ -38,6 +38,7 @@
     "dotenv": "^16.4.7",
     "filetype": "^0.1.0",
     "hijri-converter": "^1.1.1",
+    "node-schedule": "^2.1.1",
     "praytimes": "^0.0.5",
     "puppeteer-core": "^24.1.0",
     "qrcode-terminal": "^0.12.0",

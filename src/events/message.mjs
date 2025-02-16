@@ -34,6 +34,7 @@ export default function message(client, MessageMedia, Poll) {
             const groupIDs = config.allowedGroups;
             const getChat = await message.getChat();
             const getContact = await message.getContact();
+
             // تجميع المعلومات في كائن واحد
             const messageMeta = {
                 pushname: getContact.pushname || getContact.verifiedName || message._data.notifyName,

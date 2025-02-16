@@ -71,12 +71,20 @@ export function initGroupLockScheduler(client, MessageMedia) {
       const videoBase64 = videoBuffer.toString('base64');
       const videoMedia = new MessageMedia('video/mp4', videoBase64, 'unlock_video.mp4');
       const currentTime = formatTime12Hour(new Date());
-      // let textMessage = `✅ القروب مفتوح الآن! (${currentTime}) مرحباً بالجميع.`;
+      const stickerPath = path.join(config.paths.public, 'images', 'lock_group.png');
+      const stickerBuffer = await fs.readFile(stickerPath);
+      const stickerBase64 = stickerBuffer.toString('base64');
+      const stickerMedia = new MessageMedia('image/png', stickerBase64, 'lock_group.png');
       let textMessage = `*تنبيه* 📢\n\n`;
       textMessage += "تم *فتح* القروب الآن،\n"
       textMessage += "ونسأل الله أن يكون يومكم مليئًا بالخير والبركة،\n"
       textMessage += "حيّاكم الله جميعاً، ومرحبًا بتفاعلكم الطيب. 🌿🤍"
       await chat.sendMessage(videoMedia, { caption: textMessage });
+      await chat.sendMessage(stickerMedia, {
+        sendMediaAsSticker: true,
+        stickerAuthor: 'تنبيه',
+        stickerName: 'تم فتح القروب ✅'
+      });
       logger.info(`تم إرسال رسالة فتح القروب في ${groupId}.`);
     } catch (error) {
       logger.error(`خطأ أثناء إرسال رسالة فتح القروب في ${groupId}:`, error);
@@ -92,15 +100,25 @@ export function initGroupLockScheduler(client, MessageMedia) {
     try {
       const chat = await client.getChatById(groupId);
       // تعديل مسار الفيديو حسب ملف القفل (lock)
-      const videoPath = path.join(config.paths.public, 'videos', 'lock_video.mp4'); // عدل هذا المسار حسب احتياجك
+      const videoPath = path.join(config.paths.public, 'videos', 'lock_video.mp4');
       const videoBuffer = await fs.readFile(videoPath);
       const videoBase64 = videoBuffer.toString('base64');
       const videoMedia = new MessageMedia('video/mp4', videoBase64, 'lock_video.mp4');
+      const stickerPath = path.join(config.paths.public, 'images', 'lock_group.png');
+      const stickerBuffer = await fs.readFile(stickerPath);
+      const stickerBase64 = stickerBuffer.toString('base64');
+      const stickerMedia = new MessageMedia('image/png', stickerBase64, 'lock_group.png');
+
       let textMessage = `*تنبيه* 📢\n\n`;
       textMessage += "لقد حان وقت *إغلاق* القروب،\n"
       textMessage += "ويتجدد لقاؤنا معكم بإذن الله تعالی غداً،\n"
       textMessage += "غفر الله لنا ولكم، ودمتم في حفظه ورعايته. 🤍"
       await chat.sendMessage(videoMedia, { caption: textMessage });
+      await chat.sendMessage(stickerMedia, {
+        sendMediaAsSticker: true,
+        stickerAuthor: 'تنبيه',
+        stickerName: 'تم إغلاق القروب ⚠️'
+      });
       logger.info(`تم إرسال رسالة قفل القروب في ${groupId}.`);
     } catch (error) {
       logger.error(`خطأ أثناء إرسال رسالة قفل القروب في ${groupId}:`, error);

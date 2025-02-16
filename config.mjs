@@ -15,6 +15,8 @@ export const config = {
   groupJoin: process.env.GROUP_JOIN === 'true',
   groupLeave: process.env.GROUP_LEAVE === 'true',
   toStickerAuto: process.env.STICKER_AUTO === 'true',
+  lockCron: process.env.LOCK_CRON || "0 1 * * *",
+  unlockCron: process.env.UNLOCK_CRON || "0 13 * * *",
 
   /* Paths */
   paths: {

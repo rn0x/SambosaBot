@@ -16,11 +16,7 @@ setupEvents(client, MessageMedia, Poll);
 ===============================
 */
 
-// تعبير كرون لوقت القفل: "0 1 * * *" تعني الساعة 1:00 فجرا يوميًا
-const lockCron = "0 1 * * *";
-// تعبير كرون لوقت الفتح: "0 13 * * *" تعني الساعة 13:00 ظهرا يوميًا
-const unlockCron = "0 13 * * *";
 const groupLockScheduler = initGroupLockScheduler(client, MessageMedia);
-groupLockScheduler.scheduleAllGroups(config.groupsToScheduleLockUnlock, lockCron, unlockCron);
+groupLockScheduler.scheduleAllGroups(config.groupsToScheduleLockUnlock, config.lockCron, config.unlockCron);
 
 await client.initialize(); // تهيئة العميل أولًا

@@ -1,5 +1,5 @@
 {
-  "name": "stickerworld",
+  "name": "sambosabot",
   "description": "بوت لتحويل الصور والفيديوهات إلى ملصقات، إدارة القروبات، وتنفيذ مهام أخرى.",
   "version": "1.0.0",
   "main": "index.js",
@@ -19,7 +19,7 @@
   "author": {
     "name": "Rayan Almalki (rn0x)",
     "email": "rn0x.me@gmail.com",
-    "url": "https://github.com/rn0x/StickerWorld"
+    "url": "https://github.com/rn0x/SambosaBot"
   },
   "license": "MIT",
   "type": "module",

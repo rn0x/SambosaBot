@@ -71,10 +71,10 @@ export function initGroupLockScheduler(client, MessageMedia) {
       const videoBase64 = videoBuffer.toString('base64');
       const videoMedia = new MessageMedia('video/mp4', videoBase64, 'unlock_video.mp4');
       const currentTime = formatTime12Hour(new Date());
-      const stickerPath = path.join(config.paths.public, 'images', 'lock_group.png');
+      const stickerPath = path.join(config.paths.public, 'images', 'unlock_group.png');
       const stickerBuffer = await fs.readFile(stickerPath);
       const stickerBase64 = stickerBuffer.toString('base64');
-      const stickerMedia = new MessageMedia('image/png', stickerBase64, 'lock_group.png');
+      const stickerMedia = new MessageMedia('image/png', stickerBase64, 'unlock_group.png');
       let textMessage = `*تنبيه* 📢\n\n`;
       textMessage += "تم *فتح* القروب الآن،\n"
       textMessage += "ونسأل الله أن يكون يومكم مليئًا بالخير والبركة،\n"

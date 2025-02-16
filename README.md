@@ -94,6 +94,81 @@ npm run dev
 - `nodemon` - لإعادة تحميل البوت عند تغييرات الكود.
 - `rembg` - مكتبة لإزالة الخلفية من الصور عبر Python.
 
+
+# طريقة التثبيت على Android باستخدام Termux
+
+## 1. تحديث النظام:
+```bash
+pkg update && pkg upgrade
+```
+
+## 2. تثبيت الأدوات المطلوبة:
+أولًا، قم بتثبيت `proot-distro` لتثبيت توزيعة لينكس:
+```bash
+pkg install proot-distro
+```
+
+## 3. تثبيت توزيعة Alpine:
+```bash
+proot-distro install alpine
+```
+
+## 4. دخول إلى التوزيعة المثبتة:
+```bash
+proot-distro login alpine
+```
+
+## 5. تحديث الحزم وتثبيت الأدوات الأساسية:
+قم بتثبيت الأدوات الأساسية مثل `nmap`، إضافة المستودعات المحدثة، ثم تثبيت `chromium`:
+```bash
+apk update && apk add --no-cache nmap && \
+echo @edge http://nl.alpinelinux.org/alpine/edge/community >> /etc/apk/repositories && \
+echo @edge http://nl.alpinelinux.org/alpine/edge/main >> /etc/apk/repositories && \
+apk update && \
+apk add --no-cache chromium
+```
+
+## 6. تثبيت Python و PIP:
+```bash
+apk add python3 py3-pip
+```
+
+## 7. تثبيت Node.js و NPM:
+```bash
+apk add --update nodejs npm
+```
+
+## 8. تثبيت FFmpeg و FFprobe:
+```bash
+apk add ffmpeg
+```
+
+## 9. تثبيت ImageMagick:
+```bash
+apk add imagemagick
+```
+
+## 10. استنساخ المستودع من GitHub:
+```bash
+git clone https://github.com/Alsarmad/whatsapp_adhkar
+```
+
+## 11. الدخول إلى المجلد المثبت:
+```bash
+cd whatsapp_adhkar
+```
+
+## 12. تثبيت التبعيات باستخدام NPM:
+```bash
+npm i
+```
+
+## 13. تشغيل التطبيق:
+```bash
+npm start
+```
+```
+
 ## 📞 الدعم
 
 إذا كنت بحاجة إلى مساعدة، يمكنك التواصل عبر تيليجرام: [f93ii](https://t.me/f93ii)

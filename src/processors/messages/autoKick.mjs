@@ -9,7 +9,7 @@ export async function autoKick(message, messageMeta, chat) {
         // التحقق مما إذا كانت الرسالة تحتوي على رابط أو رقم هاتف
         const linkPattern = /(https?:\/\/[^\s]+)/g;
         const phonePattern = /(\+?[0-9]{10,15})/g;
-        if (!linkPattern.test(message.body) && !phonePattern.test(message.body)) return;
+        if (!linkPattern.test(message.body)) return;
 
         // التأكد من أن الرسالة من قروب
         if (!messageMeta.isGroup) return;
@@ -38,7 +38,7 @@ export async function autoKick(message, messageMeta, chat) {
         // حذف رسالة المرسل (اختياري)
         await message.delete(true).catch(() => { });
         // إرسال رسالة توضيحية للعضو
-        await chat.sendMessage(`🚫 تم طردك من القروب بسبب مخالفة القوانين وإرسال روابط أو أرقام هواتف.`);
+        await chat.sendMessage(`🚫 تم طردك من القروب بسبب مخالفة القوانين وإرسال روابط.`);
         // طرد العضو من القروب
         await chat.removeParticipants([senderId]).catch(() => { });
         return 

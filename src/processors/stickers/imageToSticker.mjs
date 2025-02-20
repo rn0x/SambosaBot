@@ -135,7 +135,7 @@ export default async function imageToSticker(message, MessageMedia, messageMeta)
             }
         }
 
-        if (!media || !media.mimetype.startsWith('image/')) return;
+        if (!media || !media?.mimetype?.startsWith('image/')) return;
 
         // معالجة الأمر
         const commandMatch = commandText.match(/^!صورة(\d{1,2})?\s*(.*)/);

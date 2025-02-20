@@ -33,12 +33,15 @@ export async function autoKick(message, messageMeta, chat) {
         );
         if (senderParticipant && senderParticipant.isAdmin) return; // لا تقم بطرد المشرفين
 
+
+        
         // حذف رسالة المرسل (اختياري)
         await message.delete(true).catch(() => { });
+        // إرسال رسالة توضيحية للعضو
+        await chat.sendMessage(`🚫 تم طردك من القروب بسبب مخالفة القوانين وإرسال روابط أو أرقام هواتف.`);
         // طرد العضو من القروب
         await chat.removeParticipants([senderId]).catch(() => { });
-        // إرسال رسالة توضيحية للعضو
-        return await chat.sendMessage(`🚫 تم طردك من القروب بسبب مخالفة القوانين وإرسال روابط أو أرقام هواتف.`);
+        return 
     } catch (error) {
         logger.error('Error in autoKick:', error);
     }

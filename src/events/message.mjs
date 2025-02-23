@@ -27,6 +27,8 @@ import { videoToStickerWithText } from '../processors/stickers/videoToStickerWit
 import { applyAudioEffect } from '../processors/applyAudioEffect.mjs';
 import { sendHijriCalendar } from '../processors/sendHijriCalendar.mjs';
 import { autoKick } from '../processors/messages/autoKick.mjs';
+import { searchAndConvertToSticker } from '../processors/stickers/searchAndConvertToSticker.mjs';
+import { searchAndConvertToStickerGif } from '../processors/stickers/searchAndConvertToStickerGif.mjs';
 
 export default function message(client, MessageMedia, Poll) {
     client.on('message', async (message) => {
@@ -60,30 +62,28 @@ export default function message(client, MessageMedia, Poll) {
             }
 
             // جميع المعالجات أو الأوامر
-            await convertMediaToSticker(message, MessageMedia, messageMeta);
-            await convertImageToStickerCircle(message, MessageMedia, messageMeta);
-            await convertImageToStickerBg(message, MessageMedia, messageMeta);
-            await stealSticker(message, MessageMedia, messageMeta);
-            await convertStickerToMedia(message, MessageMedia);
-            await textToSticker(message, MessageMedia, messageMeta);
-            await imageToSticker(message, MessageMedia, messageMeta);
-            await generatePhoneNumberSticker(message, MessageMedia, messageMeta);
-            await StickerPrayerTimes(message, MessageMedia);
-            await DateToSticker(message, MessageMedia);
-            await SignatureStickers(message, MessageMedia);
-            await videoToStickerWithText(message, MessageMedia, messageMeta);
-            await sendMenu(message, messageMeta);
+            // await convertMediaToSticker(message, MessageMedia, messageMeta);
+            // await convertImageToStickerCircle(message, MessageMedia, messageMeta);
+            // await convertImageToStickerBg(message, MessageMedia, messageMeta);
+            // await stealSticker(message, MessageMedia, messageMeta);
+            // await convertStickerToMedia(message, MessageMedia);
+            // await textToSticker(message, MessageMedia, messageMeta);
+            // await imageToSticker(message, MessageMedia, messageMeta);
+            // await generatePhoneNumberSticker(message, MessageMedia, messageMeta);
+            // await StickerPrayerTimes(message, MessageMedia);
+            // await DateToSticker(message, MessageMedia);
+            // await SignatureStickers(message, MessageMedia);
+            // await videoToStickerWithText(message, MessageMedia, messageMeta);
+            // await sendMenu(message, messageMeta);
+            // await sendHijriCalendar(message, MessageMedia);
+            // await applyAudioEffect(message, MessageMedia, messageMeta);
+            await searchAndConvertToSticker(message, MessageMedia, messageMeta);
+            await searchAndConvertToStickerGif(message, MessageMedia, messageMeta);
+            // await IslamicQuiz(message, Poll);
+            // await checkAnswer(message);
 
-            await sendHijriCalendar(message, MessageMedia);
 
-            // المميزات التالية لاتعمل في بعض القروبات المحدده في  groupIDs
-            if (!groupIDs.includes(messageMeta.id)) {
-                await applyAudioEffect(message, MessageMedia, messageMeta);
-                await IslamicQuiz(message, Poll);
-                await checkAnswer(message);
-            }
-
-            await autoKick(message, messageMeta, getChat); // حذف الروابط والمرسل
+            // await autoKick(message, messageMeta, getChat); // حذف الروابط والمرسل
 
             // await message.reply(new Poll('Winter or Summer?', ['Winter', 'Summer']));
 

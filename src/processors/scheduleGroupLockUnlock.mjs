@@ -50,7 +50,7 @@ export function initGroupLockScheduler(client, MessageMedia) {
         return;
       }
       // تغيير حالة القروب: true = قفل (المشرفين فقط)، false = فتح
-      await chat.setMessagesAdminsOnly(lock);
+      await chat.setMessagesAdminsOnly(lock).catch((e) => { });
       logger.info(`تم ${lock ? 'قفل' : 'فتح'} القروب ${groupId}.`);
     } catch (error) {
       logger.error(`خطأ أثناء تحديث حالة القروب ${groupId}:`, error);
@@ -151,9 +151,9 @@ export function initGroupLockScheduler(client, MessageMedia) {
    * @param {string} unlockCron - تعبير كرون لوقت الفتح.
    */
   function scheduleAllGroups(groups, lockCron, unlockCron) {
-    groups.forEach((groupId) => {
+    for (const groupId of groups) {
       scheduleGroupLockUnlock(groupId, lockCron, unlockCron);
-    });
+    }
   }
 
   return { scheduleAllGroups };

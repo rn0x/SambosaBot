@@ -22,6 +22,7 @@ export const config = {
   paths: {
     root: root,
     public: path.join(root, "src", "public"),
+    data: path.join(root, "data"),
     logs: path.join(root, "logs"),
     temp: path.join(root, "temp"),
   },
@@ -39,6 +40,7 @@ export const config = {
   /* قائمة القروبات التي تريد جدولة فتحها وقفلها */
   groupsToScheduleLockUnlock: [
     '120363388964573265@g.us',
-    '120363372703871570@g.us'
+    '120363372703871570@g.us',
+    '120363317443417219@g.us'
   ]
 };

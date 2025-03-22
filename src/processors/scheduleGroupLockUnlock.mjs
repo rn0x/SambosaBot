@@ -13,97 +13,74 @@ import { config } from '../../config.mjs';
  * @returns {object} - يحتوي على دالة scheduleAllGroups لجدولة القروبات.
  */
 export function initGroupLockScheduler(client, MessageMedia) {
-  /**
-   * دالة مساعدة لتحويل الوقت إلى نظام الـ12 ساعة.
-   * @param {Date} date - التاريخ الحالي.
-   * @returns {string} - الوقت بصيغة "hh:mm AM/PM".
-   */
-  function formatTime12Hour(date) {
-    let hours = date.getHours();
-    let minutes = date.getMinutes();
-    const ampm = hours >= 12 ? 'PM' : 'AM';
-    hours = hours % 12;
-    if (hours === 0) hours = 12;
-    minutes = minutes < 10 ? '0' + minutes : minutes;
-    return `${hours}:${minutes} ${ampm}`;
-  }
 
-  /**
-   * تحديث حالة القروب (قفل أو فتح) عن طريق تفعيل أو إلغاء وضع "الرسائل للمشرفين فقط".
-   * @param {string} groupId - معرف القروب.
-   * @param {boolean} lock - true لقفل القروب، false لفتحه.
-   */
   async function updateGroupLockState(groupId, lock) {
     try {
       const chat = await client.getChatById(groupId);
       if (!chat.isGroup) {
-        logger.info(`${groupId} ليس قروب.`);
+        logger.info(`${groupId} ليس قروبًا.`);
         return;
       }
-      // التأكد من أن البوت مشرف في القروب
+
       const botId = client.info.wid._serialized;
       const botParticipant = chat.participants.find(
         (p) => p.id._serialized === botId
       );
+
       if (!botParticipant || !botParticipant.isAdmin) {
         logger.info(`البوت ليس مشرفًا في القروب ${groupId}.`);
         return;
       }
-      // تغيير حالة القروب: true = قفل (المشرفين فقط)، false = فتح
-      await chat.setMessagesAdminsOnly(lock).catch((e) => { });
-      logger.info(`تم ${lock ? 'قفل' : 'فتح'} القروب ${groupId}.`);
+
+      let attempts = 0;
+      const maxAttempts = 3;
+      while (attempts < maxAttempts) {
+        try {
+          await chat.setMessagesAdminsOnly(lock);
+          logger.info(`تم ${lock ? 'قفل' : 'فتح'} القروب ${groupId}.`);
+          return;
+        } catch (error) {
+          attempts++;
+          logger.warn(`محاولة ${attempts} فشلت لتغيير حالة القروب ${groupId}.`, error);
+          if (attempts < maxAttempts) await new Promise(res => setTimeout(res, 2000));
+        }
+      }
+
+      logger.error(`فشل تغيير حالة القروب ${groupId} بعد ${maxAttempts} محاولات.`);
     } catch (error) {
       logger.error(`خطأ أثناء تحديث حالة القروب ${groupId}:`, error);
     }
   }
 
-  /**
-   * عند فتح القروب، تُرسل هذه الدالة فيديو ونص معين للقروب.
-   * تأكد من تعديل مسار الفيديو ونوعه حسب الحاجة.
-   * @param {string} groupId - معرف القروب.
-   */
   async function sendUnlockMessage(groupId) {
     try {
       const chat = await client.getChatById(groupId);
-      // تعديل مسار الفيديو حسب ملف الفتح (unlock)
-      const videoPath = path.join(config.paths.public, 'videos', 'unlock_video.mp4'); // عدل هذا المسار حسب احتياجك
-      const videoBuffer = await fs.readFile(videoPath);
-      const videoBase64 = videoBuffer.toString('base64');
-      const videoMedia = new MessageMedia('video/mp4', videoBase64, 'unlock_video.mp4');
-      const currentTime = formatTime12Hour(new Date());
       const stickerPath = path.join(config.paths.public, 'images', 'unlock_group.png');
       const stickerBuffer = await fs.readFile(stickerPath);
       const stickerBase64 = stickerBuffer.toString('base64');
       const stickerMedia = new MessageMedia('image/png', stickerBase64, 'unlock_group.png');
+
       let textMessage = `*تنبيه* 📢\n\n`;
       textMessage += "تم *فتح* القروب الآن،\n"
       textMessage += "ونسأل الله أن يكون يومكم مليئًا بالخير والبركة،\n"
-      textMessage += "حيّاكم الله جميعاً، ومرحبًا بتفاعلكم الطيب. 🌿🤍"
-      await chat.sendMessage(videoMedia, { caption: textMessage });
+      textMessage += "حيّاكم الله جميعاً، ومرحبًا بتفاعلكم الطيب. 🌿🤍";
+
+      await chat.sendMessage(textMessage);
       await chat.sendMessage(stickerMedia, {
         sendMediaAsSticker: true,
         stickerAuthor: 'تنبيه',
         stickerName: 'تم فتح القروب ✅'
       });
+
       logger.info(`تم إرسال رسالة فتح القروب في ${groupId}.`);
     } catch (error) {
       logger.error(`خطأ أثناء إرسال رسالة فتح القروب في ${groupId}:`, error);
     }
   }
 
-  /**
-   * عند قفل القروب، تُرسل هذه الدالة فيديو ونص معين للقروب.
-   * تأكد من تعديل مسار الفيديو ونوعه حسب الحاجة.
-   * @param {string} groupId - معرف القروب.
-   */
   async function sendLockMessage(groupId) {
     try {
       const chat = await client.getChatById(groupId);
-      // تعديل مسار الفيديو حسب ملف القفل (lock)
-      const videoPath = path.join(config.paths.public, 'videos', 'lock_video.mp4');
-      const videoBuffer = await fs.readFile(videoPath);
-      const videoBase64 = videoBuffer.toString('base64');
-      const videoMedia = new MessageMedia('video/mp4', videoBase64, 'lock_video.mp4');
       const stickerPath = path.join(config.paths.public, 'images', 'lock_group.png');
       const stickerBuffer = await fs.readFile(stickerPath);
       const stickerBase64 = stickerBuffer.toString('base64');
@@ -112,13 +89,15 @@ export function initGroupLockScheduler(client, MessageMedia) {
       let textMessage = `*تنبيه* 📢\n\n`;
       textMessage += "لقد حان وقت *إغلاق* القروب،\n"
       textMessage += "ويتجدد لقاؤنا معكم بإذن الله تعالی غداً،\n"
-      textMessage += "غفر الله لنا ولكم، ودمتم في حفظه ورعايته. 🤍"
-      await chat.sendMessage(videoMedia, { caption: textMessage });
+      textMessage += "غفر الله لنا ولكم، ودمتم في حفظه ورعايته. 🤍";
+
+      await chat.sendMessage(textMessage);
       await chat.sendMessage(stickerMedia, {
         sendMediaAsSticker: true,
         stickerAuthor: 'تنبيه',
         stickerName: 'تم إغلاق القروب ⚠️'
       });
+
       logger.info(`تم إرسال رسالة قفل القروب في ${groupId}.`);
     } catch (error) {
       logger.error(`خطأ أثناء إرسال رسالة قفل القروب في ${groupId}:`, error);
@@ -126,34 +105,32 @@ export function initGroupLockScheduler(client, MessageMedia) {
   }
 
   /**
-   * جدولة قفل وفتح قروب معين باستخدام node-schedule.
-   * @param {string} groupId - معرف القروب.
-   * @param {string} lockCron - تعبير كرون لوقت القفل (مثلاً "0 1 * * *" يعني الساعة 1:00 صباحًا يوميًا).
-   * @param {string} unlockCron - تعبير كرون لوقت الفتح (مثلاً "0 10 * * *" يعني الساعة 10:00 صباحًا يوميًا).
-   */
-  function scheduleGroupLockUnlock(groupId, lockCron, unlockCron) {
-    // جدولة القفل مع إرسال فيديو ونص
-    schedule.scheduleJob(lockCron, async () => {
-      await updateGroupLockState(groupId, true);
-      await sendLockMessage(groupId);
-    });
-    // جدولة الفتح مع إرسال فيديو ونص
-    schedule.scheduleJob(unlockCron, async () => {
-      await updateGroupLockState(groupId, false);
-      await sendUnlockMessage(groupId);
-    });
-  }
-
-  /**
-   * جدولة جميع القروبات الموجودة في القائمة وفقًا لتعبيرات كرون الخاصة بالقفل والفتح.
+   * جدولة جميع القروبات مع تأخير أثناء القفل والفتح.
    * @param {string[]} groups - قائمة معرفات القروبات.
    * @param {string} lockCron - تعبير كرون لوقت القفل.
    * @param {string} unlockCron - تعبير كرون لوقت الفتح.
+   * @param {number} delay - التأخير بين كل قروب (بالمللي ثانية، الافتراضي 30 ثانية).
    */
-  function scheduleAllGroups(groups, lockCron, unlockCron) {
-    for (const groupId of groups) {
-      scheduleGroupLockUnlock(groupId, lockCron, unlockCron);
-    }
+  function scheduleAllGroups(groups, lockCron, unlockCron, delay = 30000) {
+    schedule.scheduleJob(lockCron, async () => {
+      logger.info(`بدأ تنفيذ إغلاق القروبات (${groups.length} قروب) بفارق زمني ${delay / 1000} ثانية لكل قروب.`);
+      for (let i = 0; i < groups.length; i++) {
+        setTimeout(async () => {
+          await updateGroupLockState(groups[i], true);
+          await sendLockMessage(groups[i]);
+        }, i * delay);
+      }
+    });
+
+    schedule.scheduleJob(unlockCron, async () => {
+      logger.info(`بدأ تنفيذ فتح القروبات (${groups.length} قروب) بفارق زمني ${delay / 1000} ثانية لكل قروب.`);
+      for (let i = 0; i < groups.length; i++) {
+        setTimeout(async () => {
+          await updateGroupLockState(groups[i], false);
+          await sendUnlockMessage(groups[i]);
+        }, i * delay);
+      }
+    });
   }
 
   return { scheduleAllGroups };

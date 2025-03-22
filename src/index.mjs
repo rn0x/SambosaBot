@@ -17,6 +17,6 @@ setupEvents(client, MessageMedia, Poll);
 */
 
 const groupLockScheduler = initGroupLockScheduler(client, MessageMedia);
-groupLockScheduler.scheduleAllGroups(config.groupsToScheduleLockUnlock, config.lockCron, config.unlockCron);
+groupLockScheduler.scheduleAllGroups(config.groupsToScheduleLockUnlock, config.lockCron, config.unlockCron, 30000);
 
 await client.initialize(); // تهيئة العميل أولًا

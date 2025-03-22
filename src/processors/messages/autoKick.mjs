@@ -1,47 +1,84 @@
-// /processors/messages/autoKick.mjs
-
+import fs from 'fs-extra';
+import path from "node:path";
 import logger from '../../utils/logger.mjs';
 import client from '../../client.mjs';
+import { config } from '../../../config.mjs';
+
+// ملف حفظ بيانات المخالفات
+const DATA_FILE = path.join(config.paths.data, '/violations.json');
+const DATA_DIR = path.dirname(DATA_FILE);
+const WARNING_LIMIT = 2; // عدد المرات التي يُسمح بها قبل الطرد
+
+// التأكد من وجود المجلد والملف
+function ensureDataFile() {
+    try {
+        if (!fs.existsSync(DATA_DIR)) {
+            fs.mkdirSync(DATA_DIR, { recursive: true });
+        }
+        if (!fs.existsSync(DATA_FILE)) {
+            fs.writeJsonSync(DATA_FILE, {});
+        }
+    } catch (error) {
+        logger.error('Error ensuring data file:', error);
+    }
+}
+
+// تحميل البيانات من ملف JSON
+function loadViolations() {
+    ensureDataFile();
+    try {
+        return fs.readJsonSync(DATA_FILE, { throws: false }) || {};
+    } catch (error) {
+        logger.error('Error loading violations data:', error);
+        return {};
+    }
+}
+
+// حفظ البيانات في ملف JSON
+function saveViolations(data) {
+    ensureDataFile();
+    try {
+        fs.writeJsonSync(DATA_FILE, data, { spaces: 2 });
+    } catch (error) {
+        logger.error('Error saving violations data:', error);
+    }
+}
 
 export async function autoKick(message, messageMeta, chat) {
     try {
-
-        // التحقق مما إذا كانت الرسالة تحتوي على رابط أو رقم هاتف
         const linkPattern = /(https?:\/\/[^\s]+)/g;
-        const phonePattern = /(\+?[0-9]{10,15})/g;
         if (!linkPattern.test(message.body)) return;
-
-        // التأكد من أن الرسالة من قروب
         if (!messageMeta.isGroup) return;
 
-        // الحصول على رقم المرسل
         const senderId = message.author || message.from;
-
-        // التحقق من أن البوت نفسه مشرف
+        const senderName = messageMeta.pushname || messageMeta.number;
         const botId = client.info.wid._serialized;
-        const botParticipant = chat.participants.find(
-            (participant) => participant.id._serialized === botId
-        );
-        if (!botParticipant || !botParticipant.isAdmin) {
-            logger.info("البوت ليس مشرفًا، لذا لا يمكنه حذف الأعضاء.");
-            return;
+        const botParticipant = chat.participants.find(p => p.id._serialized === botId);
+        if (!botParticipant || !botParticipant.isAdmin) return;
+
+        const senderParticipant = chat.participants.find(p => p.id._serialized === senderId);
+        if (senderParticipant && senderParticipant.isAdmin) return;
+
+        let violations = loadViolations();
+        const chatId = chat.id._serialized;
+        if (!violations[chatId]) violations[chatId] = {};
+        if (!violations[chatId][senderId]) violations[chatId][senderId] = 0;
+
+        violations[chatId][senderId]++;
+        saveViolations(violations);
+
+        const remainingWarnings = WARNING_LIMIT - violations[chatId][senderId] + 1;
+        
+        if (violations[chatId][senderId] > WARNING_LIMIT) {
+            await chat.sendMessage(`🚫 عذرًا ${senderName}، تم إنهاء مشاركتك في المجموعة بسبب إرسال الروابط بشكل متكرر. نتمنى لك التوفيق.`);
+            await chat.removeParticipants([senderId]).catch(() => {});
+            violations[chatId][senderId] = 0; // تصفير عدد المخالفات بعد الإزالة
+            saveViolations(violations);
+        } else {
+            await chat.sendMessage(`⚠️ تنبيه: ${senderName}، يُرجى الامتناع عن نشر الروابط في هذه المجموعة. لقد تم تسجيل مخالفتك رقم ${violations[chatId][senderId]}. لا يزال لديك ${remainingWarnings} تنبيه قبل اتخاذ إجراء بخصوص استمرارك في المجموعة.`);
         }
 
-        // التحقق مما إذا كان المرسل مشرفًا
-        const senderParticipant = chat.participants.find(
-            (participant) => participant.id._serialized === senderId
-        );
-        if (senderParticipant && senderParticipant.isAdmin) return; // لا تقم بطرد المشرفين
-
-
-        
-        // حذف رسالة المرسل (اختياري)
-        await message.delete(true).catch(() => { });
-        // إرسال رسالة توضيحية للعضو
-        await chat.sendMessage(`🚫 تم طردك من القروب بسبب مخالفة القوانين وإرسال روابط.`);
-        // طرد العضو من القروب
-        await chat.removeParticipants([senderId]).catch(() => { });
-        return 
+        await message.delete(true).catch(() => {});
     } catch (error) {
         logger.error('Error in autoKick:', error);
     }

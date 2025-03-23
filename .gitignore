@@ -8,3 +8,5 @@ database.sqlite
 quizData.json
 logs
 output
+violations.json
+data

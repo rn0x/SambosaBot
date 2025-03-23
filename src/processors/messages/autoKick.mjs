@@ -61,24 +61,34 @@ export async function autoKick(message, messageMeta, chat) {
 
         let violations = loadViolations();
         const chatId = chat.id._serialized;
+
         if (!violations[chatId]) violations[chatId] = {};
-        if (!violations[chatId][senderId]) violations[chatId][senderId] = 0;
+        if (!violations[chatId][senderId]) violations[chatId][senderId] = { count: 0, warned: false };
 
-        violations[chatId][senderId]++;
-        saveViolations(violations);
+        const userViolations = violations[chatId][senderId];
 
-        const remainingWarnings = WARNING_LIMIT - violations[chatId][senderId] + 1;
-        
-        if (violations[chatId][senderId] > WARNING_LIMIT) {
-            await chat.sendMessage(`🚫 عذرًا ${senderName}، تم إنهاء مشاركتك في المجموعة بسبب إرسال الروابط بشكل متكرر. نتمنى لك التوفيق.`);
+        // زيادة المخالفة
+        userViolations.count++;
+
+        // إذا تم الطرد مسبقًا خلال نفس الدورة
+        if (userViolations.count > WARNING_LIMIT && !userViolations.warned) {
+            userViolations.warned = true;  // علامة أنه تم الطرد
+            await chat.sendMessage(`رد آلي: \n🚫 عذرًا ${senderName}، تم إنهاء مشاركتك في المجموعة بسبب إرسال الروابط بشكل متكرر. نتمنى لك التوفيق.`);
             await chat.removeParticipants([senderId]).catch(() => {});
-            violations[chatId][senderId] = 0; // تصفير عدد المخالفات بعد الإزالة
-            saveViolations(violations);
+            userViolations.count = 0; // تصفير عدد المخالفات بعد الإزالة
         } else {
-            await chat.sendMessage(`⚠️ تنبيه: ${senderName}، يُرجى الامتناع عن نشر الروابط في هذه المجموعة. لقد تم تسجيل مخالفتك رقم ${violations[chatId][senderId]}. لا يزال لديك ${remainingWarnings} تنبيه قبل اتخاذ إجراء بخصوص استمرارك في المجموعة.`);
+            const remainingWarnings = WARNING_LIMIT - userViolations.count + 1;
+            if (!userViolations.warned) {
+                await chat.sendMessage(`رد آلي: \n⚠️ تنبيه: ${senderName}، يُرجى الامتناع عن نشر الروابط في هذه المجموعة. لقد تم تسجيل مخالفتك رقم ${userViolations.count}. لا يزال لديك ${remainingWarnings} تنبيه قبل اتخاذ إجراء بخصوص استمرارك في المجموعة.`);
+            }
         }
 
+        // حفظ البيانات بعد المعالجة
+        saveViolations(violations);
+
+        // حذف الرسالة المخالفة
         await message.delete(true).catch(() => {});
+
     } catch (error) {
         logger.error('Error in autoKick:', error);
     }

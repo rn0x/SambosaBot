@@ -29,6 +29,7 @@ import { sendHijriCalendar } from '../processors/sendHijriCalendar.mjs';
 import { autoKick } from '../processors/messages/autoKick.mjs';
 import { searchAndConvertToSticker } from '../processors/stickers/searchAndConvertToSticker.mjs';
 import { searchAndConvertToStickerGif } from '../processors/stickers/searchAndConvertToStickerGif.mjs';
+import { handleAdMessage } from '../processors/messages/adsDetector.mjs';
 
 export default function message(client, MessageMedia, Poll) {
     client.on('message', async (message) => {
@@ -84,7 +85,8 @@ export default function message(client, MessageMedia, Poll) {
 
 
             await autoKick(message, messageMeta, getChat); // حذف الروابط والمرسل
-
+            await handleAdMessage(message, messageMeta, getChat); // التحقق من الإعلانات
+            
             // await message.reply(new Poll('Winter or Summer?', ['Winter', 'Summer']));
 
         } catch (error) {

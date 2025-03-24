@@ -73,8 +73,11 @@ export async function autoKick(message, messageMeta, chat) {
         // إذا تم الطرد مسبقًا خلال نفس الدورة
         if (userViolations.count > WARNING_LIMIT && !userViolations.warned) {
             userViolations.warned = true;  // علامة أنه تم الطرد
+            if (userViolations.warned) {
+                await chat.removeParticipants([senderId]).catch(() => { });
+            }
             await chat.sendMessage(`رد آلي: \n🚫 عذرًا ${senderName}، تم إنهاء مشاركتك في المجموعة بسبب إرسال الروابط بشكل متكرر. نتمنى لك التوفيق.`);
-            await chat.removeParticipants([senderId]).catch(() => {});
+            await chat.removeParticipants([senderId]).catch(() => { });
             userViolations.count = 0; // تصفير عدد المخالفات بعد الإزالة
         } else {
             const remainingWarnings = WARNING_LIMIT - userViolations.count + 1;
@@ -87,7 +90,7 @@ export async function autoKick(message, messageMeta, chat) {
         saveViolations(violations);
 
         // حذف الرسالة المخالفة
-        await message.delete(true).catch(() => {});
+        await message.delete(true).catch(() => { });
 
     } catch (error) {
         logger.error('Error in autoKick:', error);

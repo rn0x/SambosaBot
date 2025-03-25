@@ -76,13 +76,13 @@ export async function autoKick(message, messageMeta, chat) {
             if (userViolations.warned) {
                 await chat.removeParticipants([senderId]).catch(() => { });
             }
-            await chat.sendMessage(`رد آلي: \n🚫 عذرًا ${senderName}، تم إنهاء مشاركتك في المجموعة بسبب إرسال الروابط بشكل متكرر. نتمنى لك التوفيق.`);
+            await chat.sendMessage(`🚫 عذرًا ${senderName}، تم إنهاء مشاركتك في المجموعة بسبب إرسال الروابط بشكل متكرر. نتمنى لك التوفيق.`);
             await chat.removeParticipants([senderId]).catch(() => { });
             userViolations.count = 0; // تصفير عدد المخالفات بعد الإزالة
         } else {
             const remainingWarnings = WARNING_LIMIT - userViolations.count + 1;
             if (!userViolations.warned) {
-                await chat.sendMessage(`رد آلي: \n⚠️ تنبيه: ${senderName}، يُرجى الامتناع عن نشر الروابط في هذه المجموعة. لقد تم تسجيل مخالفتك رقم ${userViolations.count}. لا يزال لديك ${remainingWarnings} تنبيه قبل اتخاذ إجراء بخصوص استمرارك في المجموعة.`);
+                await chat.sendMessage(`⚠️ ${senderName}، يُرجى تجنب إرسال الروابط في هذه المجموعة. (تنبيه ${userViolations.count} من أصل ${totalWarnings})`);  
             }
         }
 

@@ -82,7 +82,7 @@ export async function autoKick(message, messageMeta, chat) {
         } else {
             const remainingWarnings = WARNING_LIMIT - userViolations.count + 1;
             if (!userViolations.warned) {
-                await chat.sendMessage(`⚠️ ${senderName}، يُرجى تجنب إرسال الروابط في هذه المجموعة. (تنبيه ${userViolations.count} من أصل ${totalWarnings})`);  
+                await chat.sendMessage(`⚠️ ${senderName}، يُرجى تجنب إرسال الروابط في هذه المجموعة. (تنبيه ${userViolations.count} من أصل ${WARNING_LIMIT})`);  
             }
         }
 

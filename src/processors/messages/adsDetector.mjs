@@ -29,7 +29,7 @@ function isAdMessage(message) {
 
     const words = message.body.toLowerCase().split(/\s+/);
     const containsBlacklistedWord = words.some(word => blacklist.includes(word));
-    const hasNumber = /\d{3,}/.test(message.body);
+    const hasNumber = /\d{9,}/.test(message.body);
     const isLongMessage = words.length > 30;
 
     return containsBlacklistedWord && (hasNumber || isLongMessage);

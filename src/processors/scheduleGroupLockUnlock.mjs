@@ -61,9 +61,11 @@ export function initGroupLockScheduler(client, MessageMedia) {
       const stickerMedia = new MessageMedia('image/png', stickerBase64, 'unlock_group.png');
 
       let textMessage = `*تنبيه* 📢\n\n`;
-      textMessage += "تم *فتح* القروب الآن،\n"
-      textMessage += "ونسأل الله أن يكون يومكم مليئًا بالخير والبركة،\n"
-      textMessage += "حيّاكم الله جميعاً، ومرحبًا بتفاعلكم الطيب. 🌿🤍";
+      textMessage += "تم *فتح* القروب الآن،\n";
+      textMessage += "ونسأل الله أن يكون يومكم مليئًا بالخير والبركة،\n";
+      textMessage += "حيّاكم الله جميعاً، ومرحبًا بتفاعلكم الطيب. 🌿🤍\n\n";
+      textMessage += "📌 ملاحظة: سيتم *إغلاق* القروب في تمام الساعة 5 فجرًا.";
+
 
       await chat.sendMessage(textMessage);
       await chat.sendMessage(stickerMedia, {
@@ -87,9 +89,10 @@ export function initGroupLockScheduler(client, MessageMedia) {
       const stickerMedia = new MessageMedia('image/png', stickerBase64, 'lock_group.png');
 
       let textMessage = `*تنبيه* 📢\n\n`;
-      textMessage += "لقد حان وقت *إغلاق* القروب،\n"
-      textMessage += "ويتجدد لقاؤنا معكم بإذن الله تعالی غداً،\n"
+      textMessage += "لقد حان وقت *إغلاق* القروب،\n";
+      textMessage += "ويتجدد لقاؤنا معكم بإذن الله تعالى غداً *في تمام الساعة 1 ظهرًا*.\n";
       textMessage += "غفر الله لنا ولكم، ودمتم في حفظه ورعايته. 🤍";
+
 
       await chat.sendMessage(textMessage);
       await chat.sendMessage(stickerMedia, {

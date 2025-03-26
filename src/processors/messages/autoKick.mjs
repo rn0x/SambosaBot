@@ -7,7 +7,7 @@ import { config } from '../../../config.mjs';
 // ملف حفظ بيانات المخالفات
 const DATA_FILE = path.join(config.paths.data, '/violations.json');
 const DATA_DIR = path.dirname(DATA_FILE);
-const WARNING_LIMIT = 2; // عدد المرات التي يُسمح بها قبل الطرد
+const WARNING_LIMIT = 1; // عدد المرات التي يُسمح بها قبل الطرد
 
 // التأكد من وجود المجلد والملف
 function ensureDataFile() {
@@ -82,7 +82,7 @@ export async function autoKick(message, messageMeta, chat) {
         } else {
             const remainingWarnings = WARNING_LIMIT - userViolations.count + 1;
             if (!userViolations.warned) {
-                await chat.sendMessage(`⚠️ ${senderName}، يُرجى تجنب إرسال الروابط في هذه المجموعة. (تنبيه ${userViolations.count} من أصل ${WARNING_LIMIT})`);  
+                await chat.sendMessage(`⚠️ ${senderName}، يُرجى تجنب إرسال الروابط في هذه المجموعة. (تنبيه ${userViolations.count} من أصل ${WARNING_LIMIT + 1})`);
             }
         }
 

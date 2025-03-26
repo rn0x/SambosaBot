@@ -88,6 +88,8 @@ function isAdMessage(message) {
  */
 export async function handleAdMessage(message, messageMeta, chat) {
     if (!messageMeta.isGroup) return;
+    const linkPattern = /(https?:\/\/[^\s]+)/g;
+    if (linkPattern.test(message.body)) return;
 
     if (isAdMessage(message)) {
         try {

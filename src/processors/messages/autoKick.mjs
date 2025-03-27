@@ -7,7 +7,7 @@ import { config } from '../../../config.mjs';
 // ملف حفظ بيانات المخالفات
 const DATA_FILE = path.join(config.paths.data, '/violations.json');
 const DATA_DIR = path.dirname(DATA_FILE);
-const WARNING_LIMIT = 1; // عدد المرات التي يُسمح بها قبل الطرد
+const WARNING_LIMIT = 1; // عدد التنبيهات قبل الطرد
 
 // التأكد من وجود المجلد والملف
 function ensureDataFile() {
@@ -23,7 +23,7 @@ function ensureDataFile() {
     }
 }
 
-// تحميل البيانات من ملف JSON
+// تحميل وحفظ بيانات المخالفات
 function loadViolations() {
     ensureDataFile();
     try {
@@ -34,7 +34,6 @@ function loadViolations() {
     }
 }
 
-// حفظ البيانات في ملف JSON
 function saveViolations(data) {
     ensureDataFile();
     try {
@@ -46,51 +45,49 @@ function saveViolations(data) {
 
 export async function autoKick(message, messageMeta, chat) {
     try {
+        if (!messageMeta.isGroup) return;
+
         const linkPattern = /(https?:\/\/[^\s]+)/g;
         if (!linkPattern.test(message.body)) return;
-        if (!messageMeta.isGroup) return;
 
         const senderId = message.author || message.from;
         const senderName = messageMeta.pushname || messageMeta.number;
         const botId = client.info.wid._serialized;
+
+        // التحقق مما إذا كان البوت مشرفًا
         const botParticipant = chat.participants.find(p => p.id._serialized === botId);
         if (!botParticipant || !botParticipant.isAdmin) return;
 
+        // التحقق مما إذا كان المرسل مشرفًا
         const senderParticipant = chat.participants.find(p => p.id._serialized === senderId);
         if (senderParticipant && senderParticipant.isAdmin) return;
 
+        // حذف الرسالة
+        await message.delete(true).catch(() => { });
+
+        // تحميل المخالفات
         let violations = loadViolations();
         const chatId = chat.id._serialized;
 
         if (!violations[chatId]) violations[chatId] = {};
-        if (!violations[chatId][senderId]) violations[chatId][senderId] = { count: 0, warned: false };
+        if (!violations[chatId][senderId]) violations[chatId][senderId] = { count: 0 };
 
-        const userViolations = violations[chatId][senderId];
+        // زيادة عدد المخالفات
+        violations[chatId][senderId].count++;
 
-        // زيادة المخالفة
-        userViolations.count++;
-
-        // إذا تم الطرد مسبقًا خلال نفس الدورة
-        if (userViolations.count > WARNING_LIMIT && !userViolations.warned) {
-            userViolations.warned = true;  // علامة أنه تم الطرد
-            if (userViolations.warned) {
-                await chat.removeParticipants([senderId]).catch(() => { });
-            }
-            await chat.sendMessage(`🚫 عذرًا ${senderName}، تم إنهاء مشاركتك في المجموعة بسبب إرسال الروابط بشكل متكرر. نتمنى لك التوفيق.`);
+        if (violations[chatId][senderId].count > WARNING_LIMIT) {
+            await chat.sendMessage(`🚫 *عذرًا ${senderName}، لقد تجاوزت الحد المسموح به من التنبيهات بشأن نشر الروابط، وبناءً على ذلك، ننهي عضويتك في هذه المجموعة.*`);
             await chat.removeParticipants([senderId]).catch(() => { });
-            userViolations.count = 0; // تصفير عدد المخالفات بعد الإزالة
+
+            // إعادة تعيين عدد المخالفات بعد الطرد
+            delete violations[chatId][senderId];
         } else {
-            const remainingWarnings = WARNING_LIMIT - userViolations.count + 1;
-            if (!userViolations.warned) {
-                await chat.sendMessage(`⚠️ ${senderName}، يُرجى تجنب إرسال الروابط في هذه المجموعة. (تنبيه ${userViolations.count} من أصل ${WARNING_LIMIT + 1})`);
-            }
+            await chat.sendMessage(`⚠️ *${senderName}*\nتجنّب إرسال الروابط. (تنبيه ${violations[chatId][senderId].count} من ${WARNING_LIMIT + 1})`);
+
         }
 
-        // حفظ البيانات بعد المعالجة
+        // حفظ التعديلات
         saveViolations(violations);
-
-        // حذف الرسالة المخالفة
-        await message.delete(true).catch(() => { });
 
     } catch (error) {
         logger.error('Error in autoKick:', error);
